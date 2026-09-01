@@ -1,0 +1,161 @@
+{
+  "schema_version": 1,
+  "task": "image_inpainting",
+  "architectures": [
+    {
+      "name": "stable_diffusion_inpaint",
+      "family": "Stable Diffusion Inpaint",
+      "task_kind": "masked image generation",
+      "source": {
+        "hub_id": "stable-diffusion-v1-5/stable-diffusion-inpainting",
+        "revision": "8a4288a76071f7280aedbdb3253bdb9e9d5d84bb",
+        "library": "diffusers",
+        "class": "StableDiffusionInpaintPipeline",
+        "source_file": "upstream/StableDiffusionInpaintPipeline.py",
+        "trust_remote_code": false,
+        "license": "creativeml-openrail-m",
+        "gated": false,
+        "pipeline_tag": "text-to-image",
+        "hub_library": "diffusers",
+        "minimum_hardware": "gpu_16gb_or_more"
+      },
+      "losses": [
+        "masked_noise_mse",
+        "masked_charbonnier",
+        "perceptual_lpips",
+        "ssim_boundary",
+        "context_l1"
+      ],
+      "evaluation": [
+        "masked_PSNR",
+        "masked_SSIM",
+        "LPIPS",
+        "FID"
+      ]
+    },
+    {
+      "name": "sdxl_inpaint",
+      "family": "SDXL Inpaint",
+      "task_kind": "masked image generation",
+      "source": {
+        "hub_id": "diffusers/stable-diffusion-xl-1.0-inpainting-0.1",
+        "revision": "115134f363124c53c7d878647567d04daf26e41e",
+        "library": "diffusers",
+        "class": "StableDiffusionXLInpaintPipeline",
+        "source_file": "upstream/StableDiffusionXLInpaintPipeline.py",
+        "trust_remote_code": false,
+        "license": "openrail++",
+        "gated": false,
+        "pipeline_tag": "text-to-image",
+        "hub_library": "diffusers",
+        "minimum_hardware": "gpu_16gb_or_more"
+      },
+      "losses": [
+        "masked_noise_mse",
+        "masked_charbonnier",
+        "perceptual_lpips",
+        "ssim_boundary",
+        "context_l1"
+      ],
+      "evaluation": [
+        "masked_PSNR",
+        "masked_SSIM",
+        "LPIPS",
+        "FID"
+      ]
+    },
+    {
+      "name": "kandinsky22_inpaint",
+      "family": "Kandinsky 2.2 Inpaint",
+      "task_kind": "masked image generation",
+      "source": {
+        "hub_id": "kandinsky-community/kandinsky-2-2-decoder-inpaint",
+        "revision": "db790ad5cbcabed886f069ef2710774657621702",
+        "library": "diffusers",
+        "class": "KandinskyV22InpaintPipeline",
+        "source_file": "upstream/KandinskyV22InpaintPipeline.py",
+        "trust_remote_code": false,
+        "license": "apache-2.0",
+        "gated": false,
+        "pipeline_tag": "text-to-image",
+        "hub_library": "diffusers",
+        "minimum_hardware": "gpu_16gb_or_more"
+      },
+      "losses": [
+        "masked_noise_mse",
+        "masked_charbonnier",
+        "perceptual_lpips",
+        "ssim_boundary",
+        "context_l1"
+      ],
+      "evaluation": [
+        "masked_PSNR",
+        "masked_SSIM",
+        "LPIPS",
+        "FID"
+      ]
+    },
+    {
+      "name": "repaint",
+      "family": "RePaint",
+      "task_kind": "masked image generation",
+      "source": {
+        "hub_id": "google/ddpm-ema-celebahq-256",
+        "revision": "4cb6117472e6e4f45c5afe606b101858c27c3802",
+        "library": "diffusers",
+        "class": "RePaintPipeline",
+        "source_file": "upstream/RePaintPipeline.py",
+        "trust_remote_code": false,
+        "license": "apache-2.0",
+        "gated": false,
+        "pipeline_tag": "unconditional-image-generation",
+        "hub_library": "diffusers",
+        "minimum_hardware": "gpu_16gb_or_more"
+      },
+      "losses": [
+        "masked_noise_mse",
+        "masked_charbonnier",
+        "perceptual_lpips",
+        "ssim_boundary",
+        "context_l1"
+      ],
+      "evaluation": [
+        "masked_PSNR",
+        "masked_SSIM",
+        "LPIPS",
+        "FID"
+      ]
+    },
+    {
+      "name": "controlnet_inpaint",
+      "family": "ControlNet Inpaint",
+      "task_kind": "masked image generation",
+      "source": {
+        "hub_id": "lllyasviel/control_v11p_sd15_inpaint",
+        "revision": "c96e03a807e64135568ba8aecb66b3a306ec73bd",
+        "library": "diffusers",
+        "class": "ControlNetModel",
+        "source_file": "upstream/ControlNetModel.py",
+        "trust_remote_code": false,
+        "license": "openrail",
+        "gated": false,
+        "pipeline_tag": "image-to-image",
+        "hub_library": "diffusers",
+        "minimum_hardware": "gpu_16gb_or_more"
+      },
+      "losses": [
+        "masked_noise_mse",
+        "masked_charbonnier",
+        "perceptual_lpips",
+        "ssim_boundary",
+        "context_l1"
+      ],
+      "evaluation": [
+        "masked_PSNR",
+        "masked_SSIM",
+        "LPIPS",
+        "FID"
+      ]
+    }
+  ]
+}

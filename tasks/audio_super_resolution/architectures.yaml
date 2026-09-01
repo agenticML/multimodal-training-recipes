@@ -1,0 +1,156 @@
+{
+  "schema_version": 1,
+  "task": "audio_super_resolution",
+  "architectures": [
+    {
+      "name": "audiosr",
+      "family": "AudioSR",
+      "task_kind": "low-to-high bandwidth audio",
+      "source": {
+        "hub_id": "haoheliu/audiosr_basic",
+        "revision": "74a47f49061a1e788e968cc43ad45c0b6243f37d",
+        "library": "custom",
+        "class": "AudioSR",
+        "source_file": "upstream/AudioSR.py",
+        "trust_remote_code": true,
+        "license": "apache-2.0",
+        "gated": false,
+        "pipeline_tag": null,
+        "hub_library": null,
+        "minimum_hardware": "gpu_8gb_or_more"
+      },
+      "losses": [
+        "waveform_l1",
+        "multi_resolution_stft",
+        "si_sdr",
+        "log_mel_spectral_convergence"
+      ],
+      "evaluation": [
+        "SI_SDR",
+        "log_spectral_distance",
+        "PESQ",
+        "STOI"
+      ]
+    },
+    {
+      "name": "flashsr",
+      "family": "FlashSR",
+      "task_kind": "low-to-high bandwidth audio",
+      "source": {
+        "hub_id": "aufklarer/FlashSR-MLX-8bit",
+        "revision": "63da0bc604ed355b0ce9d91d8d2fbf5995743768",
+        "library": "mlx",
+        "class": "FlashSR",
+        "source_file": "upstream/FlashSR.py",
+        "trust_remote_code": false,
+        "license": "cc-by-nc-4.0",
+        "gated": false,
+        "pipeline_tag": "audio-to-audio",
+        "hub_library": "mlx",
+        "minimum_hardware": "gpu_8gb_or_more"
+      },
+      "losses": [
+        "waveform_l1",
+        "multi_resolution_stft",
+        "si_sdr",
+        "log_mel_spectral_convergence"
+      ],
+      "evaluation": [
+        "SI_SDR",
+        "log_spectral_distance",
+        "PESQ",
+        "STOI"
+      ]
+    },
+    {
+      "name": "nuwave2",
+      "family": "NU-Wave2",
+      "task_kind": "low-to-high bandwidth audio",
+      "source": {
+        "hub_id": "huseinzol05/nuwave2",
+        "revision": "d025c7f418884a36f5634ec69e9219a3b9ce8816",
+        "library": "custom",
+        "class": "NuWave2",
+        "source_file": "upstream/NuWave2.py",
+        "trust_remote_code": true,
+        "license": "unspecified",
+        "gated": false,
+        "pipeline_tag": null,
+        "hub_library": null,
+        "minimum_hardware": "gpu_8gb_or_more"
+      },
+      "losses": [
+        "waveform_l1",
+        "multi_resolution_stft",
+        "si_sdr",
+        "log_mel_spectral_convergence"
+      ],
+      "evaluation": [
+        "SI_SDR",
+        "log_spectral_distance",
+        "PESQ",
+        "STOI"
+      ]
+    },
+    {
+      "name": "aero",
+      "family": "AERO",
+      "task_kind": "low-to-high bandwidth audio",
+      "source": {
+        "hub_id": "oulianov/slp-rl-aero",
+        "revision": "33ab062aedb14cb5723313f6699f5694f0c11b52",
+        "library": "custom",
+        "class": "AERO",
+        "source_file": "upstream/AERO.py",
+        "trust_remote_code": true,
+        "license": "mit",
+        "gated": false,
+        "pipeline_tag": "audio-to-audio",
+        "hub_library": "pytorch",
+        "minimum_hardware": "gpu_8gb_or_more"
+      },
+      "losses": [
+        "waveform_l1",
+        "multi_resolution_stft",
+        "si_sdr",
+        "log_mel_spectral_convergence"
+      ],
+      "evaluation": [
+        "SI_SDR",
+        "log_spectral_distance",
+        "PESQ",
+        "STOI"
+      ]
+    },
+    {
+      "name": "universr",
+      "family": "UniverSR",
+      "task_kind": "low-to-high bandwidth audio",
+      "source": {
+        "hub_id": "woongzip1/universr-audio",
+        "revision": "1c3294844285af851b6ffa56cbde4e43cd41fc2b",
+        "library": "custom",
+        "class": "UniverSR",
+        "source_file": "upstream/UniverSR.py",
+        "trust_remote_code": true,
+        "license": "cc-by-4.0",
+        "gated": false,
+        "pipeline_tag": null,
+        "hub_library": "pytorch",
+        "minimum_hardware": "gpu_8gb_or_more"
+      },
+      "losses": [
+        "waveform_l1",
+        "multi_resolution_stft",
+        "si_sdr",
+        "log_mel_spectral_convergence"
+      ],
+      "evaluation": [
+        "SI_SDR",
+        "log_spectral_distance",
+        "PESQ",
+        "STOI"
+      ]
+    }
+  ]
+}

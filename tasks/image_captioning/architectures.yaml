@@ -1,0 +1,156 @@
+{
+  "schema_version": 1,
+  "task": "image_captioning",
+  "architectures": [
+    {
+      "name": "vit_gpt2",
+      "family": "ViT-GPT2 VisionEncoderDecoder",
+      "task_kind": "image-to-text",
+      "source": {
+        "hub_id": "nlpconnect/vit-gpt2-image-captioning",
+        "revision": "dc68f91c06a1ba6f15268e5b9c13ae7a7c514084",
+        "library": "transformers",
+        "class": "VisionEncoderDecoderModel",
+        "source_file": "upstream/VisionEncoderDecoderModel.py",
+        "trust_remote_code": false,
+        "license": "apache-2.0",
+        "gated": false,
+        "pipeline_tag": "image-to-text",
+        "hub_library": "transformers",
+        "minimum_hardware": "gpu_16gb_or_more"
+      },
+      "losses": [
+        "token_cross_entropy",
+        "label_smoothed_cross_entropy",
+        "focal_token",
+        "self_critical_cider"
+      ],
+      "evaluation": [
+        "CIDEr",
+        "BLEU_4",
+        "METEOR",
+        "ROUGE_L"
+      ]
+    },
+    {
+      "name": "git",
+      "family": "GIT",
+      "task_kind": "image-to-text",
+      "source": {
+        "hub_id": "microsoft/git-base",
+        "revision": "1f7fe8444292beb4a259e3a5b6eba440cd5999d4",
+        "library": "transformers",
+        "class": "GitForCausalLM",
+        "source_file": "upstream/GitForCausalLM.py",
+        "trust_remote_code": false,
+        "license": "mit",
+        "gated": false,
+        "pipeline_tag": "image-to-text",
+        "hub_library": "transformers",
+        "minimum_hardware": "gpu_16gb_or_more"
+      },
+      "losses": [
+        "token_cross_entropy",
+        "label_smoothed_cross_entropy",
+        "focal_token",
+        "self_critical_cider"
+      ],
+      "evaluation": [
+        "CIDEr",
+        "BLEU_4",
+        "METEOR",
+        "ROUGE_L"
+      ]
+    },
+    {
+      "name": "blip",
+      "family": "BLIP",
+      "task_kind": "image-to-text",
+      "source": {
+        "hub_id": "Salesforce/blip-image-captioning-base",
+        "revision": "82a37760796d32b1411fe092ab5d4e227313294b",
+        "library": "transformers",
+        "class": "BlipForConditionalGeneration",
+        "source_file": "upstream/BlipForConditionalGeneration.py",
+        "trust_remote_code": false,
+        "license": "bsd-3-clause",
+        "gated": false,
+        "pipeline_tag": "image-to-text",
+        "hub_library": "transformers",
+        "minimum_hardware": "gpu_16gb_or_more"
+      },
+      "losses": [
+        "token_cross_entropy",
+        "label_smoothed_cross_entropy",
+        "focal_token",
+        "self_critical_cider"
+      ],
+      "evaluation": [
+        "CIDEr",
+        "BLEU_4",
+        "METEOR",
+        "ROUGE_L"
+      ]
+    },
+    {
+      "name": "blip2",
+      "family": "BLIP-2",
+      "task_kind": "image-to-text",
+      "source": {
+        "hub_id": "Salesforce/blip2-opt-2.7b",
+        "revision": "59a1ef6c1e5117b3f65523d1c6066825bcf315e3",
+        "library": "transformers",
+        "class": "Blip2ForConditionalGeneration",
+        "source_file": "upstream/Blip2ForConditionalGeneration.py",
+        "trust_remote_code": false,
+        "license": "mit",
+        "gated": false,
+        "pipeline_tag": "image-text-to-text",
+        "hub_library": "transformers",
+        "minimum_hardware": "gpu_16gb_or_more"
+      },
+      "losses": [
+        "token_cross_entropy",
+        "label_smoothed_cross_entropy",
+        "focal_token",
+        "self_critical_cider"
+      ],
+      "evaluation": [
+        "CIDEr",
+        "BLEU_4",
+        "METEOR",
+        "ROUGE_L"
+      ]
+    },
+    {
+      "name": "instructblip",
+      "family": "InstructBLIP",
+      "task_kind": "image-to-text",
+      "source": {
+        "hub_id": "Salesforce/instructblip-flan-t5-xl",
+        "revision": "bf9bd58cb3bb06e88c03b80f9cc346b90094bc6d",
+        "library": "transformers",
+        "class": "InstructBlipForConditionalGeneration",
+        "source_file": "upstream/InstructBlipForConditionalGeneration.py",
+        "trust_remote_code": false,
+        "license": "mit",
+        "gated": false,
+        "pipeline_tag": "image-text-to-text",
+        "hub_library": "transformers",
+        "minimum_hardware": "gpu_16gb_or_more"
+      },
+      "losses": [
+        "token_cross_entropy",
+        "label_smoothed_cross_entropy",
+        "focal_token",
+        "self_critical_cider"
+      ],
+      "evaluation": [
+        "CIDEr",
+        "BLEU_4",
+        "METEOR",
+        "ROUGE_L"
+      ]
+    }
+  ]
+}

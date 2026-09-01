@@ -1,0 +1,151 @@
+{
+  "schema_version": 1,
+  "task": "llm",
+  "architectures": [
+    {
+      "name": "gpt2",
+      "family": "GPT-2",
+      "task_kind": "causal language modeling",
+      "source": {
+        "hub_id": "openai-community/gpt2",
+        "revision": "607a30d783dfa663caf39e06633721c8d4cfcd7e",
+        "library": "transformers",
+        "class": "GPT2LMHeadModel",
+        "source_file": "upstream/GPT2LMHeadModel.py",
+        "trust_remote_code": false,
+        "license": "mit",
+        "gated": false,
+        "pipeline_tag": "text-generation",
+        "hub_library": "transformers",
+        "minimum_hardware": "gpu_24gb_or_more"
+      },
+      "losses": [
+        "causal_cross_entropy",
+        "label_smoothed_cross_entropy",
+        "focal_token",
+        "unlikelihood"
+      ],
+      "evaluation": [
+        "perplexity",
+        "token_accuracy",
+        "exact_match"
+      ]
+    },
+    {
+      "name": "llama",
+      "family": "Llama",
+      "task_kind": "causal language modeling",
+      "source": {
+        "hub_id": "TinyLlama/TinyLlama-1.1B-Chat-v1.0",
+        "revision": "fe8a4ea1ffedaf415f4da2f062534de366a451e6",
+        "library": "transformers",
+        "class": "LlamaForCausalLM",
+        "source_file": "upstream/LlamaForCausalLM.py",
+        "trust_remote_code": false,
+        "license": "apache-2.0",
+        "gated": false,
+        "pipeline_tag": "text-generation",
+        "hub_library": "transformers",
+        "minimum_hardware": "gpu_24gb_or_more"
+      },
+      "losses": [
+        "causal_cross_entropy",
+        "label_smoothed_cross_entropy",
+        "focal_token",
+        "unlikelihood"
+      ],
+      "evaluation": [
+        "perplexity",
+        "token_accuracy",
+        "exact_match"
+      ]
+    },
+    {
+      "name": "mistral",
+      "family": "Mistral",
+      "task_kind": "causal language modeling",
+      "source": {
+        "hub_id": "mistralai/Mistral-7B-v0.1",
+        "revision": "27d67f1b5f57dc0953326b2601d68371d40ea8da",
+        "library": "transformers",
+        "class": "MistralForCausalLM",
+        "source_file": "upstream/MistralForCausalLM.py",
+        "trust_remote_code": false,
+        "license": "apache-2.0",
+        "gated": false,
+        "pipeline_tag": "text-generation",
+        "hub_library": "transformers",
+        "minimum_hardware": "gpu_24gb_or_more"
+      },
+      "losses": [
+        "causal_cross_entropy",
+        "label_smoothed_cross_entropy",
+        "focal_token",
+        "unlikelihood"
+      ],
+      "evaluation": [
+        "perplexity",
+        "token_accuracy",
+        "exact_match"
+      ]
+    },
+    {
+      "name": "gemma",
+      "family": "Gemma 2",
+      "task_kind": "causal language modeling",
+      "source": {
+        "hub_id": "google/gemma-2-2b",
+        "revision": "c5ebcd40d208330abc697524c919956e692655cf",
+        "library": "transformers",
+        "class": "Gemma2ForCausalLM",
+        "source_file": "upstream/Gemma2ForCausalLM.py",
+        "trust_remote_code": false,
+        "license": "gemma",
+        "gated": true,
+        "pipeline_tag": "text-generation",
+        "hub_library": "transformers",
+        "minimum_hardware": "gpu_24gb_or_more"
+      },
+      "losses": [
+        "causal_cross_entropy",
+        "label_smoothed_cross_entropy",
+        "focal_token",
+        "unlikelihood"
+      ],
+      "evaluation": [
+        "perplexity",
+        "token_accuracy",
+        "exact_match"
+      ]
+    },
+    {
+      "name": "qwen",
+      "family": "Qwen2.5",
+      "task_kind": "causal language modeling",
+      "source": {
+        "hub_id": "Qwen/Qwen2.5-0.5B",
+        "revision": "060db6499f32faf8b98477b0a26969ef7d8b9987",
+        "library": "transformers",
+        "class": "Qwen2ForCausalLM",
+        "source_file": "upstream/Qwen2ForCausalLM.py",
+        "trust_remote_code": false,
+        "license": "apache-2.0",
+        "gated": false,
+        "pipeline_tag": "text-generation",
+        "hub_library": "transformers",
+        "minimum_hardware": "gpu_24gb_or_more"
+      },
+      "losses": [
+        "causal_cross_entropy",
+        "label_smoothed_cross_entropy",
+        "focal_token",
+        "unlikelihood"
+      ],
+      "evaluation": [
+        "perplexity",
+        "token_accuracy",
+        "exact_match"
+      ]
+    }
+  ]
+}

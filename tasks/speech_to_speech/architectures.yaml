@@ -1,0 +1,161 @@
+{
+  "schema_version": 1,
+  "task": "speech_to_speech",
+  "architectures": [
+    {
+      "name": "speecht5_vc",
+      "family": "SpeechT5 Voice Conversion",
+      "task_kind": "audio-to-audio",
+      "source": {
+        "hub_id": "microsoft/speecht5_vc",
+        "revision": "c418ba2144598f973d0fddc9fd5909a3af83de3d",
+        "library": "transformers",
+        "class": "SpeechT5ForSpeechToSpeech",
+        "source_file": "transformers/models/speecht5/modeling_speecht5.py",
+        "trust_remote_code": false,
+        "license": "mit",
+        "gated": false,
+        "pipeline_tag": "audio-to-audio",
+        "hub_library": "transformers",
+        "minimum_hardware": "gpu_24gb_or_more"
+      },
+      "losses": [
+        "mel_mse",
+        "mel_l1",
+        "multi_resolution_stft",
+        "si_sdr",
+        "content_speaker_contrastive"
+      ],
+      "evaluation": [
+        "ASR_BLEU",
+        "speaker_similarity",
+        "PESQ",
+        "STOI"
+      ]
+    },
+    {
+      "name": "seamless_m4t",
+      "family": "SeamlessM4T",
+      "task_kind": "audio-to-audio",
+      "source": {
+        "hub_id": "facebook/hf-seamless-m4t-medium",
+        "revision": "ecf60d4df63baaac3f82ae6a7ad7adcb19dcb26c",
+        "library": "transformers",
+        "class": "SeamlessM4TForSpeechToSpeech",
+        "source_file": "upstream/SeamlessM4TForSpeechToSpeech.py",
+        "trust_remote_code": false,
+        "license": "cc-by-nc-4.0",
+        "gated": false,
+        "pipeline_tag": "text-to-speech",
+        "hub_library": "transformers",
+        "minimum_hardware": "gpu_24gb_or_more"
+      },
+      "losses": [
+        "mel_mse",
+        "mel_l1",
+        "multi_resolution_stft",
+        "si_sdr",
+        "content_speaker_contrastive"
+      ],
+      "evaluation": [
+        "ASR_BLEU",
+        "speaker_similarity",
+        "PESQ",
+        "STOI"
+      ]
+    },
+    {
+      "name": "seamless_m4t_v2",
+      "family": "SeamlessM4Tv2",
+      "task_kind": "audio-to-audio",
+      "source": {
+        "hub_id": "facebook/seamless-m4t-v2-large",
+        "revision": "5f8cc790b19fc3f67a61c105133b20b34e3dcb76",
+        "library": "transformers",
+        "class": "SeamlessM4Tv2ForSpeechToSpeech",
+        "source_file": "upstream/SeamlessM4Tv2ForSpeechToSpeech.py",
+        "trust_remote_code": false,
+        "license": "cc-by-nc-4.0",
+        "gated": false,
+        "pipeline_tag": "automatic-speech-recognition",
+        "hub_library": "transformers",
+        "minimum_hardware": "gpu_24gb_or_more"
+      },
+      "losses": [
+        "mel_mse",
+        "mel_l1",
+        "multi_resolution_stft",
+        "si_sdr",
+        "content_speaker_contrastive"
+      ],
+      "evaluation": [
+        "ASR_BLEU",
+        "speaker_similarity",
+        "PESQ",
+        "STOI"
+      ]
+    },
+    {
+      "name": "moshi",
+      "family": "Moshi",
+      "task_kind": "audio-to-audio",
+      "source": {
+        "hub_id": "kyutai/moshika-pytorch-bf16",
+        "revision": "a49141e28b3d9c947cf9aa5314431e1b11cbd2f5",
+        "library": "transformers",
+        "class": "MoshiForConditionalGeneration",
+        "source_file": "upstream/MoshiForConditionalGeneration.py",
+        "trust_remote_code": false,
+        "license": "cc-by-4.0",
+        "gated": false,
+        "pipeline_tag": null,
+        "hub_library": "moshi",
+        "minimum_hardware": "gpu_24gb_or_more"
+      },
+      "losses": [
+        "mel_mse",
+        "mel_l1",
+        "multi_resolution_stft",
+        "si_sdr",
+        "content_speaker_contrastive"
+      ],
+      "evaluation": [
+        "ASR_BLEU",
+        "speaker_similarity",
+        "PESQ",
+        "STOI"
+      ]
+    },
+    {
+      "name": "qwen_omni",
+      "family": "Qwen2.5-Omni",
+      "task_kind": "audio-to-audio",
+      "source": {
+        "hub_id": "Qwen/Qwen2.5-Omni-3B",
+        "revision": "f75b40e3da2003cdd6e1829b1f420ca70797c34e",
+        "library": "transformers",
+        "class": "Qwen2_5OmniForConditionalGeneration",
+        "source_file": "upstream/Qwen2_5OmniForConditionalGeneration.py",
+        "trust_remote_code": false,
+        "license": "other",
+        "gated": false,
+        "pipeline_tag": "any-to-any",
+        "hub_library": "transformers",
+        "minimum_hardware": "gpu_24gb_or_more"
+      },
+      "losses": [
+        "mel_mse",
+        "mel_l1",
+        "multi_resolution_stft",
+        "si_sdr",
+        "content_speaker_contrastive"
+      ],
+      "evaluation": [
+        "ASR_BLEU",
+        "speaker_similarity",
+        "PESQ",
+        "STOI"
+      ]
+    }
+  ]
+}

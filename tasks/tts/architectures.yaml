@@ -1,0 +1,161 @@
+{
+  "schema_version": 1,
+  "task": "tts",
+  "architectures": [
+    {
+      "name": "speecht5",
+      "family": "SpeechT5",
+      "task_kind": "audio regression",
+      "source": {
+        "hub_id": "microsoft/speecht5_tts",
+        "revision": "30fcde30f19b87502b8435427b5f5068e401d5f6",
+        "library": "transformers",
+        "class": "SpeechT5ForTextToSpeech",
+        "source_file": "transformers/models/speecht5/modeling_speecht5.py",
+        "trust_remote_code": false,
+        "license": "mit",
+        "gated": false,
+        "pipeline_tag": "text-to-speech",
+        "hub_library": "transformers",
+        "minimum_hardware": "gpu_16gb_or_more"
+      },
+      "losses": [
+        "mel_l1",
+        "mel_mse",
+        "multi_resolution_stft",
+        "duration_pitch_energy",
+        "kl_feature_matching"
+      ],
+      "evaluation": [
+        "mel_cepstral_distortion",
+        "PESQ",
+        "STOI",
+        "speaker_similarity"
+      ]
+    },
+    {
+      "name": "vits_mms",
+      "family": "VITS / MMS-TTS",
+      "task_kind": "audio regression",
+      "source": {
+        "hub_id": "facebook/mms-tts-eng",
+        "revision": "c71de0fe7204c83f1c10820a7d696d0b450048ba",
+        "library": "transformers",
+        "class": "VitsModel",
+        "source_file": "transformers/models/vits/modeling_vits.py",
+        "trust_remote_code": false,
+        "license": "cc-by-nc-4.0",
+        "gated": false,
+        "pipeline_tag": "text-to-speech",
+        "hub_library": "transformers",
+        "minimum_hardware": "gpu_16gb_or_more"
+      },
+      "losses": [
+        "mel_l1",
+        "mel_mse",
+        "multi_resolution_stft",
+        "duration_pitch_energy",
+        "kl_feature_matching"
+      ],
+      "evaluation": [
+        "mel_cepstral_distortion",
+        "PESQ",
+        "STOI",
+        "speaker_similarity"
+      ]
+    },
+    {
+      "name": "fastspeech2_conformer",
+      "family": "FastSpeech2-Conformer",
+      "task_kind": "audio regression",
+      "source": {
+        "hub_id": "espnet/kan-bayashi_csmsc_conformer_fastspeech2",
+        "revision": "130e1e771be8670de6b420691cc755373673fcbc",
+        "library": "transformers",
+        "class": "FastSpeech2ConformerModel",
+        "source_file": "transformers/models/fastspeech2_conformer/modeling_fastspeech2_conformer.py",
+        "trust_remote_code": false,
+        "license": "cc-by-4.0",
+        "gated": false,
+        "pipeline_tag": "text-to-speech",
+        "hub_library": "espnet",
+        "minimum_hardware": "gpu_16gb_or_more"
+      },
+      "losses": [
+        "mel_l1",
+        "mel_mse",
+        "multi_resolution_stft",
+        "duration_pitch_energy",
+        "kl_feature_matching"
+      ],
+      "evaluation": [
+        "mel_cepstral_distortion",
+        "PESQ",
+        "STOI",
+        "speaker_similarity"
+      ]
+    },
+    {
+      "name": "bark",
+      "family": "Bark",
+      "task_kind": "audio regression",
+      "source": {
+        "hub_id": "suno/bark-small",
+        "revision": "1dbd7a128513b8ae4a4e2130fed57b7ac9da5bcd",
+        "library": "transformers",
+        "class": "BarkModel",
+        "source_file": "transformers/models/bark/modeling_bark.py",
+        "trust_remote_code": false,
+        "license": "mit",
+        "gated": false,
+        "pipeline_tag": "text-to-speech",
+        "hub_library": "transformers",
+        "minimum_hardware": "gpu_16gb_or_more"
+      },
+      "losses": [
+        "mel_l1",
+        "mel_mse",
+        "multi_resolution_stft",
+        "duration_pitch_energy",
+        "kl_feature_matching"
+      ],
+      "evaluation": [
+        "mel_cepstral_distortion",
+        "PESQ",
+        "STOI",
+        "speaker_similarity"
+      ]
+    },
+    {
+      "name": "seamless_m4t_t2s",
+      "family": "SeamlessM4Tv2 T2S",
+      "task_kind": "audio regression",
+      "source": {
+        "hub_id": "facebook/seamless-m4t-v2-large",
+        "revision": "5f8cc790b19fc3f67a61c105133b20b34e3dcb76",
+        "library": "transformers",
+        "class": "SeamlessM4Tv2ForTextToSpeech",
+        "source_file": "upstream/SeamlessM4Tv2ForTextToSpeech.py",
+        "trust_remote_code": false,
+        "license": "cc-by-nc-4.0",
+        "gated": false,
+        "pipeline_tag": "automatic-speech-recognition",
+        "hub_library": "transformers",
+        "minimum_hardware": "gpu_16gb_or_more"
+      },
+      "losses": [
+        "mel_l1",
+        "mel_mse",
+        "multi_resolution_stft",
+        "duration_pitch_energy",
+        "kl_feature_matching"
+      ],
+      "evaluation": [
+        "mel_cepstral_distortion",
+        "PESQ",
+        "STOI",
+        "speaker_similarity"
+      ]
+    }
+  ]
+}

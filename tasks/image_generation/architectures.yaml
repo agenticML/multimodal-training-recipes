@@ -1,0 +1,161 @@
+{
+  "schema_version": 1,
+  "task": "image_generation",
+  "architectures": [
+    {
+      "name": "ddpm_unet2d",
+      "family": "DDPM / UNet2D",
+      "task_kind": "image generation",
+      "source": {
+        "hub_id": "google/ddpm-cifar10-32",
+        "revision": "267b167dc01f0e4e61923ea244e8b988f84deb80",
+        "library": "diffusers",
+        "class": "UNet2DModel",
+        "source_file": "diffusers/models/unets/unet_2d.py",
+        "trust_remote_code": false,
+        "license": "apache-2.0",
+        "gated": false,
+        "pipeline_tag": "unconditional-image-generation",
+        "hub_library": "diffusers",
+        "minimum_hardware": "gpu_16gb_or_more"
+      },
+      "losses": [
+        "epsilon_mse",
+        "v_prediction_mse",
+        "huber_diffusion",
+        "min_snr_mse",
+        "adversarial_feature_matching"
+      ],
+      "evaluation": [
+        "FID",
+        "KID",
+        "inception_score",
+        "LPIPS_diversity"
+      ]
+    },
+    {
+      "name": "dit",
+      "family": "Diffusion Transformer",
+      "task_kind": "image generation",
+      "source": {
+        "hub_id": "facebook/DiT-XL-2-256",
+        "revision": "eab87f77abd5aef071a632f08807fbaab0b704d0",
+        "library": "diffusers",
+        "class": "DiTTransformer2DModel",
+        "source_file": "upstream/DiTTransformer2DModel.py",
+        "trust_remote_code": false,
+        "license": "cc-by-nc-4.0",
+        "gated": false,
+        "pipeline_tag": null,
+        "hub_library": "diffusers",
+        "minimum_hardware": "gpu_16gb_or_more"
+      },
+      "losses": [
+        "epsilon_mse",
+        "v_prediction_mse",
+        "huber_diffusion",
+        "min_snr_mse",
+        "adversarial_feature_matching"
+      ],
+      "evaluation": [
+        "FID",
+        "KID",
+        "inception_score",
+        "LPIPS_diversity"
+      ]
+    },
+    {
+      "name": "consistency_model",
+      "family": "Consistency Model",
+      "task_kind": "image generation",
+      "source": {
+        "hub_id": "openai/diffusers-cd_imagenet64_l2",
+        "revision": "5f462e4403fc37b72ec6004e806c71805db22387",
+        "library": "diffusers",
+        "class": "UNet2DModel",
+        "source_file": "diffusers/models/unets/unet_2d.py",
+        "trust_remote_code": false,
+        "license": "mit",
+        "gated": false,
+        "pipeline_tag": null,
+        "hub_library": "diffusers",
+        "minimum_hardware": "gpu_16gb_or_more"
+      },
+      "losses": [
+        "epsilon_mse",
+        "v_prediction_mse",
+        "huber_diffusion",
+        "min_snr_mse",
+        "adversarial_feature_matching"
+      ],
+      "evaluation": [
+        "FID",
+        "KID",
+        "inception_score",
+        "LPIPS_diversity"
+      ]
+    },
+    {
+      "name": "vqgan_transformer",
+      "family": "VQGAN + Transformer",
+      "task_kind": "image generation",
+      "source": {
+        "hub_id": "dalle-mini/vqgan_imagenet_f16_16384",
+        "revision": "9f990ec03ea054204706013e2176bbb498ebc387",
+        "library": "transformers",
+        "class": "VQModel",
+        "source_file": "upstream/VQModel.py",
+        "trust_remote_code": false,
+        "license": "unspecified",
+        "gated": false,
+        "pipeline_tag": null,
+        "hub_library": "transformers",
+        "minimum_hardware": "gpu_16gb_or_more"
+      },
+      "losses": [
+        "epsilon_mse",
+        "v_prediction_mse",
+        "huber_diffusion",
+        "min_snr_mse",
+        "adversarial_feature_matching"
+      ],
+      "evaluation": [
+        "FID",
+        "KID",
+        "inception_score",
+        "LPIPS_diversity"
+      ]
+    },
+    {
+      "name": "stylegan2_ada",
+      "family": "StyleGAN2-ADA",
+      "task_kind": "image generation",
+      "source": {
+        "hub_id": "matthias-wright/stylegan2",
+        "revision": "04e43bedd793bf12ba6eeb9048332c6c2ab5f4c6",
+        "library": "custom",
+        "class": "Generator",
+        "source_file": "upstream/Generator.py",
+        "trust_remote_code": true,
+        "license": "unspecified",
+        "gated": false,
+        "pipeline_tag": null,
+        "hub_library": null,
+        "minimum_hardware": "gpu_16gb_or_more"
+      },
+      "losses": [
+        "epsilon_mse",
+        "v_prediction_mse",
+        "huber_diffusion",
+        "min_snr_mse",
+        "adversarial_feature_matching"
+      ],
+      "evaluation": [
+        "FID",
+        "KID",
+        "inception_score",
+        "LPIPS_diversity"
+      ]
+    }
+  ]
+}

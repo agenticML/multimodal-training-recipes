@@ -1,0 +1,156 @@
+{
+  "schema_version": 1,
+  "task": "video_classification",
+  "architectures": [
+    {
+      "name": "videomae",
+      "family": "VideoMAE",
+      "task_kind": "video classification",
+      "source": {
+        "hub_id": "MCG-NJU/videomae-base-finetuned-kinetics",
+        "revision": "488eb9a0565f257b32866000305c8178965eb9f6",
+        "library": "transformers",
+        "class": "VideoMAEForVideoClassification",
+        "source_file": "upstream/VideoMAEForVideoClassification.py",
+        "trust_remote_code": false,
+        "license": "cc-by-nc-4.0",
+        "gated": false,
+        "pipeline_tag": "video-classification",
+        "hub_library": "transformers",
+        "minimum_hardware": "gpu_8gb_or_more"
+      },
+      "losses": [
+        "cross_entropy",
+        "label_smoothed_cross_entropy",
+        "focal",
+        "bce_with_logits"
+      ],
+      "evaluation": [
+        "top1_accuracy",
+        "top5_accuracy",
+        "macro_F1",
+        "mAP"
+      ]
+    },
+    {
+      "name": "timesformer",
+      "family": "TimeSformer",
+      "task_kind": "video classification",
+      "source": {
+        "hub_id": "facebook/timesformer-base-finetuned-k400",
+        "revision": "8aaf40ea7d3d282dcb0a5dea01a198320d15d6c0",
+        "library": "transformers",
+        "class": "TimesformerForVideoClassification",
+        "source_file": "upstream/TimesformerForVideoClassification.py",
+        "trust_remote_code": false,
+        "license": "cc-by-nc-4.0",
+        "gated": false,
+        "pipeline_tag": "video-classification",
+        "hub_library": "transformers",
+        "minimum_hardware": "gpu_8gb_or_more"
+      },
+      "losses": [
+        "cross_entropy",
+        "label_smoothed_cross_entropy",
+        "focal",
+        "bce_with_logits"
+      ],
+      "evaluation": [
+        "top1_accuracy",
+        "top5_accuracy",
+        "macro_F1",
+        "mAP"
+      ]
+    },
+    {
+      "name": "vivit",
+      "family": "ViViT",
+      "task_kind": "video classification",
+      "source": {
+        "hub_id": "google/vivit-b-16x2-kinetics400",
+        "revision": "8a7171a57f79b9aaa58bc8d977c002a0ea0f0d42",
+        "library": "transformers",
+        "class": "VivitForVideoClassification",
+        "source_file": "upstream/VivitForVideoClassification.py",
+        "trust_remote_code": false,
+        "license": "mit",
+        "gated": false,
+        "pipeline_tag": "video-classification",
+        "hub_library": "transformers",
+        "minimum_hardware": "gpu_8gb_or_more"
+      },
+      "losses": [
+        "cross_entropy",
+        "label_smoothed_cross_entropy",
+        "focal",
+        "bce_with_logits"
+      ],
+      "evaluation": [
+        "top1_accuracy",
+        "top5_accuracy",
+        "macro_F1",
+        "mAP"
+      ]
+    },
+    {
+      "name": "mvit",
+      "family": "MViTv2",
+      "task_kind": "video classification",
+      "source": {
+        "hub_id": "DanJoshua/mvit_v2_s_Kinetics400_transf_b_rwf2000",
+        "revision": "b0f764ceabfe894db9c5a96ce605a3e363476d18",
+        "library": "torchvision",
+        "class": "mvit_v2_s",
+        "source_file": "torchvision/models/video/mvit.py",
+        "trust_remote_code": false,
+        "license": "unspecified",
+        "gated": false,
+        "pipeline_tag": null,
+        "hub_library": "transformers",
+        "minimum_hardware": "gpu_8gb_or_more"
+      },
+      "losses": [
+        "cross_entropy",
+        "label_smoothed_cross_entropy",
+        "focal",
+        "bce_with_logits"
+      ],
+      "evaluation": [
+        "top1_accuracy",
+        "top5_accuracy",
+        "macro_F1",
+        "mAP"
+      ]
+    },
+    {
+      "name": "xclip",
+      "family": "X-CLIP",
+      "task_kind": "video classification",
+      "source": {
+        "hub_id": "microsoft/xclip-base-patch32",
+        "revision": "a2e27a78a2b5d802e894b8a1ef14f3a8ce490963",
+        "library": "transformers",
+        "class": "XCLIPModel",
+        "source_file": "upstream/XCLIPModel.py",
+        "trust_remote_code": false,
+        "license": "mit",
+        "gated": false,
+        "pipeline_tag": "video-classification",
+        "hub_library": "transformers",
+        "minimum_hardware": "gpu_8gb_or_more"
+      },
+      "losses": [
+        "cross_entropy",
+        "label_smoothed_cross_entropy",
+        "focal",
+        "bce_with_logits"
+      ],
+      "evaluation": [
+        "top1_accuracy",
+        "top5_accuracy",
+        "macro_F1",
+        "mAP"
+      ]
+    }
+  ]
+}

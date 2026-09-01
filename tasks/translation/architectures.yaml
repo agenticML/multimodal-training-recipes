@@ -1,0 +1,151 @@
+{
+  "schema_version": 1,
+  "task": "translation",
+  "architectures": [
+    {
+      "name": "marian",
+      "family": "MarianMT",
+      "task_kind": "text-to-text",
+      "source": {
+        "hub_id": "Helsinki-NLP/opus-mt-en-fr",
+        "revision": "dd7f6540a7a48a7f4db59e5c0b9c42c8eea67f18",
+        "library": "transformers",
+        "class": "MarianMTModel",
+        "source_file": "upstream/MarianMTModel.py",
+        "trust_remote_code": false,
+        "license": "apache-2.0",
+        "gated": false,
+        "pipeline_tag": "translation",
+        "hub_library": "transformers",
+        "minimum_hardware": "gpu_8gb_or_more"
+      },
+      "losses": [
+        "token_cross_entropy",
+        "label_smoothed_cross_entropy",
+        "focal_token",
+        "rdrop_kl"
+      ],
+      "evaluation": [
+        "BLEU",
+        "chrF",
+        "COMET"
+      ]
+    },
+    {
+      "name": "m2m100",
+      "family": "M2M100",
+      "task_kind": "text-to-text",
+      "source": {
+        "hub_id": "facebook/m2m100_418M",
+        "revision": "55c2e61bbf05dfb8d7abccdc3fae6fc8512fd636",
+        "library": "transformers",
+        "class": "M2M100ForConditionalGeneration",
+        "source_file": "upstream/M2M100ForConditionalGeneration.py",
+        "trust_remote_code": false,
+        "license": "mit",
+        "gated": false,
+        "pipeline_tag": null,
+        "hub_library": "transformers",
+        "minimum_hardware": "gpu_8gb_or_more"
+      },
+      "losses": [
+        "token_cross_entropy",
+        "label_smoothed_cross_entropy",
+        "focal_token",
+        "rdrop_kl"
+      ],
+      "evaluation": [
+        "BLEU",
+        "chrF",
+        "COMET"
+      ]
+    },
+    {
+      "name": "mbart50",
+      "family": "mBART-50",
+      "task_kind": "text-to-text",
+      "source": {
+        "hub_id": "facebook/mbart-large-50-many-to-many-mmt",
+        "revision": "e30b6cb8eb0d43a0b73cab73c7676b9863223a30",
+        "library": "transformers",
+        "class": "MBartForConditionalGeneration",
+        "source_file": "upstream/MBartForConditionalGeneration.py",
+        "trust_remote_code": false,
+        "license": "unspecified",
+        "gated": false,
+        "pipeline_tag": "translation",
+        "hub_library": "transformers",
+        "minimum_hardware": "gpu_8gb_or_more"
+      },
+      "losses": [
+        "token_cross_entropy",
+        "label_smoothed_cross_entropy",
+        "focal_token",
+        "rdrop_kl"
+      ],
+      "evaluation": [
+        "BLEU",
+        "chrF",
+        "COMET"
+      ]
+    },
+    {
+      "name": "nllb",
+      "family": "NLLB",
+      "task_kind": "text-to-text",
+      "source": {
+        "hub_id": "facebook/nllb-200-distilled-600M",
+        "revision": "f8d333a098d19b4fd9a8b18f94170487ad3f821d",
+        "library": "transformers",
+        "class": "M2M100ForConditionalGeneration",
+        "source_file": "upstream/M2M100ForConditionalGeneration.py",
+        "trust_remote_code": false,
+        "license": "cc-by-nc-4.0",
+        "gated": false,
+        "pipeline_tag": "translation",
+        "hub_library": "transformers",
+        "minimum_hardware": "gpu_8gb_or_more"
+      },
+      "losses": [
+        "token_cross_entropy",
+        "label_smoothed_cross_entropy",
+        "focal_token",
+        "rdrop_kl"
+      ],
+      "evaluation": [
+        "BLEU",
+        "chrF",
+        "COMET"
+      ]
+    },
+    {
+      "name": "t5",
+      "family": "T5",
+      "task_kind": "text-to-text",
+      "source": {
+        "hub_id": "google-t5/t5-small",
+        "revision": "df1b051c49625cf57a3d0d8d3863ed4d13564fe4",
+        "library": "transformers",
+        "class": "T5ForConditionalGeneration",
+        "source_file": "upstream/T5ForConditionalGeneration.py",
+        "trust_remote_code": false,
+        "license": "apache-2.0",
+        "gated": false,
+        "pipeline_tag": "translation",
+        "hub_library": "transformers",
+        "minimum_hardware": "gpu_8gb_or_more"
+      },
+      "losses": [
+        "token_cross_entropy",
+        "label_smoothed_cross_entropy",
+        "focal_token",
+        "rdrop_kl"
+      ],
+      "evaluation": [
+        "BLEU",
+        "chrF",
+        "COMET"
+      ]
+    }
+  ]
+}

@@ -1,0 +1,156 @@
+{
+  "schema_version": 1,
+  "task": "asr",
+  "architectures": [
+    {
+      "name": "wav2vec2",
+      "family": "Wav2Vec2",
+      "task_kind": "audio-to-token",
+      "source": {
+        "hub_id": "facebook/wav2vec2-base-960h",
+        "revision": "22aad52d435eb6dbaf354bdad9b0da84ce7d6156",
+        "library": "transformers",
+        "class": "Wav2Vec2ForCTC",
+        "source_file": "transformers/models/wav2vec2/modeling_wav2vec2.py",
+        "trust_remote_code": false,
+        "license": "apache-2.0",
+        "gated": false,
+        "pipeline_tag": "automatic-speech-recognition",
+        "hub_library": "transformers",
+        "minimum_hardware": "gpu_8gb_or_more"
+      },
+      "losses": [
+        "ctc",
+        "token_cross_entropy",
+        "label_smoothed_cross_entropy",
+        "focal_token",
+        "ctc_attention_hybrid"
+      ],
+      "evaluation": [
+        "WER",
+        "CER",
+        "token_accuracy"
+      ]
+    },
+    {
+      "name": "hubert",
+      "family": "HuBERT",
+      "task_kind": "audio-to-token",
+      "source": {
+        "hub_id": "facebook/hubert-large-ls960-ft",
+        "revision": "ece5fabbf034c1073acae96d5401b25be96709d8",
+        "library": "transformers",
+        "class": "HubertForCTC",
+        "source_file": "transformers/models/hubert/modeling_hubert.py",
+        "trust_remote_code": false,
+        "license": "apache-2.0",
+        "gated": false,
+        "pipeline_tag": "automatic-speech-recognition",
+        "hub_library": "transformers",
+        "minimum_hardware": "gpu_8gb_or_more"
+      },
+      "losses": [
+        "ctc",
+        "token_cross_entropy",
+        "label_smoothed_cross_entropy",
+        "focal_token",
+        "ctc_attention_hybrid"
+      ],
+      "evaluation": [
+        "WER",
+        "CER",
+        "token_accuracy"
+      ]
+    },
+    {
+      "name": "data2vec_audio",
+      "family": "Data2Vec Audio",
+      "task_kind": "audio-to-token",
+      "source": {
+        "hub_id": "facebook/data2vec-audio-base-960h",
+        "revision": "32331f3123e703528918aa688a9a38232d58c872",
+        "library": "transformers",
+        "class": "Data2VecAudioForCTC",
+        "source_file": "upstream/Data2VecAudioForCTC.py",
+        "trust_remote_code": false,
+        "license": "apache-2.0",
+        "gated": false,
+        "pipeline_tag": "automatic-speech-recognition",
+        "hub_library": "transformers",
+        "minimum_hardware": "gpu_8gb_or_more"
+      },
+      "losses": [
+        "ctc",
+        "token_cross_entropy",
+        "label_smoothed_cross_entropy",
+        "focal_token",
+        "ctc_attention_hybrid"
+      ],
+      "evaluation": [
+        "WER",
+        "CER",
+        "token_accuracy"
+      ]
+    },
+    {
+      "name": "whisper",
+      "family": "Whisper",
+      "task_kind": "audio-to-token",
+      "source": {
+        "hub_id": "openai/whisper-tiny",
+        "revision": "169d4a4341b33bc18d8881c4b69c2e104e1cc0af",
+        "library": "transformers",
+        "class": "WhisperForConditionalGeneration",
+        "source_file": "transformers/models/whisper/modeling_whisper.py",
+        "trust_remote_code": false,
+        "license": "apache-2.0",
+        "gated": false,
+        "pipeline_tag": "automatic-speech-recognition",
+        "hub_library": "transformers",
+        "minimum_hardware": "gpu_8gb_or_more"
+      },
+      "losses": [
+        "ctc",
+        "token_cross_entropy",
+        "label_smoothed_cross_entropy",
+        "focal_token",
+        "ctc_attention_hybrid"
+      ],
+      "evaluation": [
+        "WER",
+        "CER",
+        "token_accuracy"
+      ]
+    },
+    {
+      "name": "speech2text",
+      "family": "Speech2Text",
+      "task_kind": "audio-to-token",
+      "source": {
+        "hub_id": "facebook/s2t-small-librispeech-asr",
+        "revision": "256e91a603c013ae09aa1e4c09cfc3f8acdf8d19",
+        "library": "transformers",
+        "class": "Speech2TextForConditionalGeneration",
+        "source_file": "upstream/Speech2TextForConditionalGeneration.py",
+        "trust_remote_code": false,
+        "license": "mit",
+        "gated": false,
+        "pipeline_tag": "automatic-speech-recognition",
+        "hub_library": "transformers",
+        "minimum_hardware": "gpu_8gb_or_more"
+      },
+      "losses": [
+        "ctc",
+        "token_cross_entropy",
+        "label_smoothed_cross_entropy",
+        "focal_token",
+        "ctc_attention_hybrid"
+      ],
+      "evaluation": [
+        "WER",
+        "CER",
+        "token_accuracy"
+      ]
+    }
+  ]
+}

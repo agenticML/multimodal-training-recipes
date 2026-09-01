@@ -1,0 +1,161 @@
+{
+  "schema_version": 1,
+  "task": "biomedical_signal_processing",
+  "architectures": [
+    {
+      "name": "patchtst",
+      "family": "PatchTST",
+      "task_kind": "ECG EEG PPG classification",
+      "source": {
+        "hub_id": "namctin/patchtst_etth1_pretrain",
+        "revision": "5dcaab0b40fa2b8a3843e2197e1f6b6e53ecd363",
+        "library": "transformers",
+        "class": "PatchTSTForClassification",
+        "source_file": "upstream/PatchTSTForClassification.py",
+        "trust_remote_code": false,
+        "license": "unspecified",
+        "gated": false,
+        "pipeline_tag": null,
+        "hub_library": "transformers",
+        "minimum_hardware": "gpu_8gb_or_more"
+      },
+      "losses": [
+        "cross_entropy",
+        "bce_with_logits",
+        "class_balanced_focal",
+        "supervised_contrastive"
+      ],
+      "evaluation": [
+        "macro_F1",
+        "AUROC",
+        "AUPRC",
+        "sensitivity",
+        "specificity"
+      ]
+    },
+    {
+      "name": "patchtsmixer",
+      "family": "PatchTSMixer",
+      "task_kind": "ECG EEG PPG classification",
+      "source": {
+        "hub_id": "ibm-granite/granite-timeseries-ttm-r2",
+        "revision": "d6a79570cac0f33d526601cd3a0fc7c80a8f9a2f",
+        "library": "transformers",
+        "class": "PatchTSMixerForPrediction",
+        "source_file": "upstream/PatchTSMixerForPrediction.py",
+        "trust_remote_code": false,
+        "license": "apache-2.0",
+        "gated": false,
+        "pipeline_tag": "time-series-forecasting",
+        "hub_library": "granite-tsfm",
+        "minimum_hardware": "gpu_8gb_or_more"
+      },
+      "losses": [
+        "cross_entropy",
+        "bce_with_logits",
+        "class_balanced_focal",
+        "supervised_contrastive"
+      ],
+      "evaluation": [
+        "macro_F1",
+        "AUROC",
+        "AUPRC",
+        "sensitivity",
+        "specificity"
+      ]
+    },
+    {
+      "name": "time_series_transformer",
+      "family": "Time Series Transformer",
+      "task_kind": "ECG EEG PPG classification",
+      "source": {
+        "hub_id": "huggingface/time-series-transformer-tourism-monthly",
+        "revision": "2a40ad41f6ffe61e7bef6099b08c6c2fce36ac35",
+        "library": "transformers",
+        "class": "TimeSeriesTransformerModel",
+        "source_file": "upstream/TimeSeriesTransformerModel.py",
+        "trust_remote_code": false,
+        "license": "mit",
+        "gated": false,
+        "pipeline_tag": "time-series-forecasting",
+        "hub_library": "transformers",
+        "minimum_hardware": "gpu_8gb_or_more"
+      },
+      "losses": [
+        "cross_entropy",
+        "bce_with_logits",
+        "class_balanced_focal",
+        "supervised_contrastive"
+      ],
+      "evaluation": [
+        "macro_F1",
+        "AUROC",
+        "AUPRC",
+        "sensitivity",
+        "specificity"
+      ]
+    },
+    {
+      "name": "informer",
+      "family": "Informer",
+      "task_kind": "ECG EEG PPG classification",
+      "source": {
+        "hub_id": "huggingface/informer-tourism-monthly",
+        "revision": "da30269a25658b3626dda20a94c9bf6b765f1b13",
+        "library": "transformers",
+        "class": "InformerModel",
+        "source_file": "upstream/InformerModel.py",
+        "trust_remote_code": false,
+        "license": "apache-2.0",
+        "gated": false,
+        "pipeline_tag": null,
+        "hub_library": "transformers",
+        "minimum_hardware": "gpu_8gb_or_more"
+      },
+      "losses": [
+        "cross_entropy",
+        "bce_with_logits",
+        "class_balanced_focal",
+        "supervised_contrastive"
+      ],
+      "evaluation": [
+        "macro_F1",
+        "AUROC",
+        "AUPRC",
+        "sensitivity",
+        "specificity"
+      ]
+    },
+    {
+      "name": "autoformer",
+      "family": "Autoformer",
+      "task_kind": "ECG EEG PPG classification",
+      "source": {
+        "hub_id": "huggingface/autoformer-tourism-monthly",
+        "revision": "3801324c8213b225c5ee93ee53f7bfd8094ae7e2",
+        "library": "transformers",
+        "class": "AutoformerModel",
+        "source_file": "upstream/AutoformerModel.py",
+        "trust_remote_code": false,
+        "license": "apache-2.0",
+        "gated": false,
+        "pipeline_tag": null,
+        "hub_library": "transformers",
+        "minimum_hardware": "gpu_8gb_or_more"
+      },
+      "losses": [
+        "cross_entropy",
+        "bce_with_logits",
+        "class_balanced_focal",
+        "supervised_contrastive"
+      ],
+      "evaluation": [
+        "macro_F1",
+        "AUROC",
+        "AUPRC",
+        "sensitivity",
+        "specificity"
+      ]
+    }
+  ]
+}

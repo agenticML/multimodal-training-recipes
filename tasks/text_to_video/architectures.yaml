@@ -1,0 +1,161 @@
+{
+  "schema_version": 1,
+  "task": "text_to_video",
+  "architectures": [
+    {
+      "name": "animatediff",
+      "family": "AnimateDiff",
+      "task_kind": "conditional video generation",
+      "source": {
+        "hub_id": "guoyww/animatediff-motion-adapter-v1-5-3",
+        "revision": "2e8139b1d1269fd8a21deb96ad19455e187692eb",
+        "library": "diffusers",
+        "class": "MotionAdapter",
+        "source_file": "diffusers/models/unets/unet_motion_model.py",
+        "trust_remote_code": false,
+        "license": "unspecified",
+        "gated": false,
+        "pipeline_tag": "text-to-video",
+        "hub_library": "diffusers",
+        "minimum_hardware": "gpu_24gb_or_more"
+      },
+      "losses": [
+        "noise_mse",
+        "v_prediction_mse",
+        "min_snr_mse",
+        "temporal_consistency",
+        "text_video_alignment"
+      ],
+      "evaluation": [
+        "FVD",
+        "CLIP_score",
+        "temporal_LPIPS",
+        "prompt_alignment"
+      ]
+    },
+    {
+      "name": "cogvideox",
+      "family": "CogVideoX",
+      "task_kind": "conditional video generation",
+      "source": {
+        "hub_id": "THUDM/CogVideoX-2b",
+        "revision": "1137dacfc2c9c012bed6a0793f4ecf2ca8e7ba01",
+        "library": "diffusers",
+        "class": "CogVideoXTransformer3DModel",
+        "source_file": "upstream/CogVideoXTransformer3DModel.py",
+        "trust_remote_code": false,
+        "license": "apache-2.0",
+        "gated": false,
+        "pipeline_tag": "text-to-video",
+        "hub_library": "diffusers",
+        "minimum_hardware": "gpu_24gb_or_more"
+      },
+      "losses": [
+        "noise_mse",
+        "v_prediction_mse",
+        "min_snr_mse",
+        "temporal_consistency",
+        "text_video_alignment"
+      ],
+      "evaluation": [
+        "FVD",
+        "CLIP_score",
+        "temporal_LPIPS",
+        "prompt_alignment"
+      ]
+    },
+    {
+      "name": "modelscope_t2v",
+      "family": "ModelScope Text-to-Video",
+      "task_kind": "conditional video generation",
+      "source": {
+        "hub_id": "damo-vilab/text-to-video-ms-1.7b",
+        "revision": "8227dddca75a8561bf858d604cc5dae52b954d01",
+        "library": "diffusers",
+        "class": "UNet3DConditionModel",
+        "source_file": "diffusers/models/unets/unet_3d_condition.py",
+        "trust_remote_code": false,
+        "license": "cc-by-nc-4.0",
+        "gated": false,
+        "pipeline_tag": "text-to-video",
+        "hub_library": "diffusers",
+        "minimum_hardware": "gpu_24gb_or_more"
+      },
+      "losses": [
+        "noise_mse",
+        "v_prediction_mse",
+        "min_snr_mse",
+        "temporal_consistency",
+        "text_video_alignment"
+      ],
+      "evaluation": [
+        "FVD",
+        "CLIP_score",
+        "temporal_LPIPS",
+        "prompt_alignment"
+      ]
+    },
+    {
+      "name": "ltx_video",
+      "family": "LTX-Video",
+      "task_kind": "conditional video generation",
+      "source": {
+        "hub_id": "Lightricks/LTX-Video",
+        "revision": "8984fa25007f376c1a299016d0957a37a2f797bb",
+        "library": "diffusers",
+        "class": "LTXVideoTransformer3DModel",
+        "source_file": "upstream/LTXVideoTransformer3DModel.py",
+        "trust_remote_code": false,
+        "license": "other",
+        "gated": false,
+        "pipeline_tag": "image-to-video",
+        "hub_library": "diffusers",
+        "minimum_hardware": "gpu_24gb_or_more"
+      },
+      "losses": [
+        "noise_mse",
+        "v_prediction_mse",
+        "min_snr_mse",
+        "temporal_consistency",
+        "text_video_alignment"
+      ],
+      "evaluation": [
+        "FVD",
+        "CLIP_score",
+        "temporal_LPIPS",
+        "prompt_alignment"
+      ]
+    },
+    {
+      "name": "mochi",
+      "family": "Mochi",
+      "task_kind": "conditional video generation",
+      "source": {
+        "hub_id": "genmo/mochi-1-preview",
+        "revision": "14be5fcea23095ed330cb214647916a451e38b6e",
+        "library": "diffusers",
+        "class": "MochiTransformer3DModel",
+        "source_file": "upstream/MochiTransformer3DModel.py",
+        "trust_remote_code": false,
+        "license": "apache-2.0",
+        "gated": false,
+        "pipeline_tag": "text-to-video",
+        "hub_library": "diffusers",
+        "minimum_hardware": "gpu_24gb_or_more"
+      },
+      "losses": [
+        "noise_mse",
+        "v_prediction_mse",
+        "min_snr_mse",
+        "temporal_consistency",
+        "text_video_alignment"
+      ],
+      "evaluation": [
+        "FVD",
+        "CLIP_score",
+        "temporal_LPIPS",
+        "prompt_alignment"
+      ]
+    }
+  ]
+}

@@ -1,0 +1,156 @@
+{
+  "schema_version": 1,
+  "task": "image_classification",
+  "architectures": [
+    {
+      "name": "vit",
+      "family": "Vision Transformer",
+      "task_kind": "image classification",
+      "source": {
+        "hub_id": "google/vit-base-patch16-224",
+        "revision": "3f49326eb077187dfe1c2a2bb15fbd74e6ab91e3",
+        "library": "transformers",
+        "class": "ViTForImageClassification",
+        "source_file": "upstream/ViTForImageClassification.py",
+        "trust_remote_code": false,
+        "license": "apache-2.0",
+        "gated": false,
+        "pipeline_tag": "image-classification",
+        "hub_library": "transformers",
+        "minimum_hardware": "gpu_8gb_or_more"
+      },
+      "losses": [
+        "cross_entropy",
+        "label_smoothed_cross_entropy",
+        "focal",
+        "bce_with_logits"
+      ],
+      "evaluation": [
+        "top1_accuracy",
+        "top5_accuracy",
+        "macro_F1",
+        "AUROC"
+      ]
+    },
+    {
+      "name": "deit",
+      "family": "DeiT",
+      "task_kind": "image classification",
+      "source": {
+        "hub_id": "facebook/deit-base-patch16-224",
+        "revision": "fb2c78a54a5637dec350432794f7b93e31f910c9",
+        "library": "transformers",
+        "class": "DeiTForImageClassification",
+        "source_file": "upstream/DeiTForImageClassification.py",
+        "trust_remote_code": false,
+        "license": "apache-2.0",
+        "gated": false,
+        "pipeline_tag": "image-classification",
+        "hub_library": "transformers",
+        "minimum_hardware": "gpu_8gb_or_more"
+      },
+      "losses": [
+        "cross_entropy",
+        "label_smoothed_cross_entropy",
+        "focal",
+        "bce_with_logits"
+      ],
+      "evaluation": [
+        "top1_accuracy",
+        "top5_accuracy",
+        "macro_F1",
+        "AUROC"
+      ]
+    },
+    {
+      "name": "swin",
+      "family": "Swin Transformer",
+      "task_kind": "image classification",
+      "source": {
+        "hub_id": "microsoft/swin-tiny-patch4-window7-224",
+        "revision": "d00d478bfaf1f417d34a1186673ad4b4be264c51",
+        "library": "transformers",
+        "class": "SwinForImageClassification",
+        "source_file": "upstream/SwinForImageClassification.py",
+        "trust_remote_code": false,
+        "license": "apache-2.0",
+        "gated": false,
+        "pipeline_tag": "image-classification",
+        "hub_library": "transformers",
+        "minimum_hardware": "gpu_8gb_or_more"
+      },
+      "losses": [
+        "cross_entropy",
+        "label_smoothed_cross_entropy",
+        "focal",
+        "bce_with_logits"
+      ],
+      "evaluation": [
+        "top1_accuracy",
+        "top5_accuracy",
+        "macro_F1",
+        "AUROC"
+      ]
+    },
+    {
+      "name": "convnext",
+      "family": "ConvNeXT",
+      "task_kind": "image classification",
+      "source": {
+        "hub_id": "facebook/convnext-tiny-224",
+        "revision": "6166b7613034066690a621d8bf25ffdf181a34f0",
+        "library": "transformers",
+        "class": "ConvNextForImageClassification",
+        "source_file": "upstream/ConvNextForImageClassification.py",
+        "trust_remote_code": false,
+        "license": "apache-2.0",
+        "gated": false,
+        "pipeline_tag": "image-classification",
+        "hub_library": "transformers",
+        "minimum_hardware": "gpu_8gb_or_more"
+      },
+      "losses": [
+        "cross_entropy",
+        "label_smoothed_cross_entropy",
+        "focal",
+        "bce_with_logits"
+      ],
+      "evaluation": [
+        "top1_accuracy",
+        "top5_accuracy",
+        "macro_F1",
+        "AUROC"
+      ]
+    },
+    {
+      "name": "beit",
+      "family": "BEiT",
+      "task_kind": "image classification",
+      "source": {
+        "hub_id": "microsoft/beit-base-patch16-224-pt22k-ft22k",
+        "revision": "9da301148150e37e533abef672062fa49f6bda4f",
+        "library": "transformers",
+        "class": "BeitForImageClassification",
+        "source_file": "upstream/BeitForImageClassification.py",
+        "trust_remote_code": false,
+        "license": "apache-2.0",
+        "gated": false,
+        "pipeline_tag": "image-classification",
+        "hub_library": "transformers",
+        "minimum_hardware": "gpu_8gb_or_more"
+      },
+      "losses": [
+        "cross_entropy",
+        "label_smoothed_cross_entropy",
+        "focal",
+        "bce_with_logits"
+      ],
+      "evaluation": [
+        "top1_accuracy",
+        "top5_accuracy",
+        "macro_F1",
+        "AUROC"
+      ]
+    }
+  ]
+}

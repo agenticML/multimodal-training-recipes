@@ -1,0 +1,161 @@
+{
+  "schema_version": 1,
+  "task": "text_to_image",
+  "architectures": [
+    {
+      "name": "stable_diffusion",
+      "family": "Stable Diffusion",
+      "task_kind": "conditional image generation",
+      "source": {
+        "hub_id": "stable-diffusion-v1-5/stable-diffusion-v1-5",
+        "revision": "451f4fe16113bff5a5d2269ed5ad43b0592e9a14",
+        "library": "diffusers",
+        "class": "StableDiffusionPipeline",
+        "source_file": "upstream/StableDiffusionPipeline.py",
+        "trust_remote_code": false,
+        "license": "creativeml-openrail-m",
+        "gated": false,
+        "pipeline_tag": "text-to-image",
+        "hub_library": "diffusers",
+        "minimum_hardware": "gpu_16gb_or_more"
+      },
+      "losses": [
+        "epsilon_mse",
+        "v_prediction_mse",
+        "min_snr_mse",
+        "prior_preservation",
+        "text_image_contrastive"
+      ],
+      "evaluation": [
+        "FID",
+        "KID",
+        "CLIP_score",
+        "prompt_alignment"
+      ]
+    },
+    {
+      "name": "sdxl",
+      "family": "Stable Diffusion XL",
+      "task_kind": "conditional image generation",
+      "source": {
+        "hub_id": "stabilityai/stable-diffusion-xl-base-1.0",
+        "revision": "462165984030d82259a11f4367a4eed129e94a7b",
+        "library": "diffusers",
+        "class": "StableDiffusionXLPipeline",
+        "source_file": "upstream/StableDiffusionXLPipeline.py",
+        "trust_remote_code": false,
+        "license": "openrail++",
+        "gated": false,
+        "pipeline_tag": "text-to-image",
+        "hub_library": "diffusers",
+        "minimum_hardware": "gpu_16gb_or_more"
+      },
+      "losses": [
+        "epsilon_mse",
+        "v_prediction_mse",
+        "min_snr_mse",
+        "prior_preservation",
+        "text_image_contrastive"
+      ],
+      "evaluation": [
+        "FID",
+        "KID",
+        "CLIP_score",
+        "prompt_alignment"
+      ]
+    },
+    {
+      "name": "kandinsky22",
+      "family": "Kandinsky 2.2",
+      "task_kind": "conditional image generation",
+      "source": {
+        "hub_id": "kandinsky-community/kandinsky-2-2-decoder",
+        "revision": "9ae140d347fed8ce6e8bb3005dcc1f48543bb8e3",
+        "library": "diffusers",
+        "class": "KandinskyV22Pipeline",
+        "source_file": "upstream/KandinskyV22Pipeline.py",
+        "trust_remote_code": false,
+        "license": "apache-2.0",
+        "gated": false,
+        "pipeline_tag": "text-to-image",
+        "hub_library": "diffusers",
+        "minimum_hardware": "gpu_16gb_or_more"
+      },
+      "losses": [
+        "epsilon_mse",
+        "v_prediction_mse",
+        "min_snr_mse",
+        "prior_preservation",
+        "text_image_contrastive"
+      ],
+      "evaluation": [
+        "FID",
+        "KID",
+        "CLIP_score",
+        "prompt_alignment"
+      ]
+    },
+    {
+      "name": "pixart_alpha",
+      "family": "PixArt-Alpha",
+      "task_kind": "conditional image generation",
+      "source": {
+        "hub_id": "PixArt-alpha/PixArt-XL-2-512x512",
+        "revision": "50f702106901db6d0f8b67eb88e814c56ded2692",
+        "library": "diffusers",
+        "class": "PixArtAlphaPipeline",
+        "source_file": "upstream/PixArtAlphaPipeline.py",
+        "trust_remote_code": false,
+        "license": "openrail++",
+        "gated": false,
+        "pipeline_tag": "text-to-image",
+        "hub_library": "diffusers",
+        "minimum_hardware": "gpu_16gb_or_more"
+      },
+      "losses": [
+        "epsilon_mse",
+        "v_prediction_mse",
+        "min_snr_mse",
+        "prior_preservation",
+        "text_image_contrastive"
+      ],
+      "evaluation": [
+        "FID",
+        "KID",
+        "CLIP_score",
+        "prompt_alignment"
+      ]
+    },
+    {
+      "name": "stable_cascade",
+      "family": "Stable Cascade",
+      "task_kind": "conditional image generation",
+      "source": {
+        "hub_id": "stabilityai/stable-cascade",
+        "revision": "a89f66d459ae653e3b4d4f992a7c3789d0dc4d16",
+        "library": "diffusers",
+        "class": "StableCascadeCombinedPipeline",
+        "source_file": "upstream/StableCascadeCombinedPipeline.py",
+        "trust_remote_code": false,
+        "license": "other",
+        "gated": false,
+        "pipeline_tag": "text-to-image",
+        "hub_library": "diffusers",
+        "minimum_hardware": "gpu_16gb_or_more"
+      },
+      "losses": [
+        "epsilon_mse",
+        "v_prediction_mse",
+        "min_snr_mse",
+        "prior_preservation",
+        "text_image_contrastive"
+      ],
+      "evaluation": [
+        "FID",
+        "KID",
+        "CLIP_score",
+        "prompt_alignment"
+      ]
+    }
+  ]
+}

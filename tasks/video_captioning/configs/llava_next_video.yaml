@@ -1,0 +1,81 @@
+{
+  "schema_version": 1,
+  "task": "video_captioning",
+  "architecture": "llava_next_video",
+  "profiles": {
+    "smoke": {
+      "model": {
+        "backend": "surrogate",
+        "load_mode": "tiny_config",
+        "fine_tuning": "full"
+      },
+      "data": {
+        "dataset_path": null,
+        "length": 8,
+        "sequence_length": 12,
+        "vocab_size": 32,
+        "num_classes": 4,
+        "seed": 42
+      },
+      "loss": [
+        {
+          "name": "token_cross_entropy",
+          "weight": 1,
+          "params": {}
+        }
+      ],
+      "optimizer": {
+        "name": "adamw",
+        "learning_rate": 0.001,
+        "weight_decay": 0.0001
+      },
+      "training": {
+        "max_steps": 2,
+        "batch_size": 2,
+        "seed": 42,
+        "device": "cpu",
+        "gradient_clip_norm": 1,
+        "save_checkpoint": true
+      },
+      "output_dir": "outputs"
+    },
+    "full": {
+      "model": {
+        "backend": "huggingface",
+        "load_mode": "pretrained",
+        "fine_tuning": "lora"
+      },
+      "data": {
+        "dataset_path": null,
+        "length": 1000,
+        "sequence_length": 128,
+        "vocab_size": 32000,
+        "num_classes": 4,
+        "seed": 42
+      },
+      "loss": [
+        {
+          "name": "token_cross_entropy",
+          "weight": 1,
+          "params": {}
+        }
+      ],
+      "optimizer": {
+        "name": "adamw",
+        "learning_rate": 0.00002,
+        "weight_decay": 0.01
+      },
+      "training": {
+        "max_steps": 1000,
+        "batch_size": 1,
+        "seed": 42,
+        "device": "cuda",
+        "precision": "bf16",
+        "gradient_accumulation_steps": 4,
+        "gradient_clip_norm": 1,
+        "save_checkpoint": true
+      },
+      "output_dir": "outputs"
+    }
+  }
+}

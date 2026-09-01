@@ -1,0 +1,161 @@
+{
+  "schema_version": 1,
+  "task": "video_captioning",
+  "architectures": [
+    {
+      "name": "git_vatex",
+      "family": "GIT VATEX",
+      "task_kind": "video-to-text",
+      "source": {
+        "hub_id": "microsoft/git-base-vatex",
+        "revision": "623363cef8744c57438ce8d62b30bef1fbbec111",
+        "library": "transformers",
+        "class": "GitForCausalLM",
+        "source_file": "upstream/GitForCausalLM.py",
+        "trust_remote_code": false,
+        "license": "mit",
+        "gated": false,
+        "pipeline_tag": "image-text-to-text",
+        "hub_library": "transformers",
+        "minimum_hardware": "gpu_24gb_or_more"
+      },
+      "losses": [
+        "token_cross_entropy",
+        "label_smoothed_cross_entropy",
+        "focal_token",
+        "self_critical_cider",
+        "temporal_contrastive"
+      ],
+      "evaluation": [
+        "CIDEr",
+        "BLEU_4",
+        "METEOR",
+        "temporal_grounding"
+      ]
+    },
+    {
+      "name": "video_llava",
+      "family": "Video-LLaVA",
+      "task_kind": "video-to-text",
+      "source": {
+        "hub_id": "LanguageBind/Video-LLaVA-7B-hf",
+        "revision": "4cf9d8cfc76a54f46a4cb43be5368b46b7f0d736",
+        "library": "transformers",
+        "class": "VideoLlavaForConditionalGeneration",
+        "source_file": "upstream/VideoLlavaForConditionalGeneration.py",
+        "trust_remote_code": false,
+        "license": "unspecified",
+        "gated": false,
+        "pipeline_tag": "image-text-to-text",
+        "hub_library": "transformers",
+        "minimum_hardware": "gpu_24gb_or_more"
+      },
+      "losses": [
+        "token_cross_entropy",
+        "label_smoothed_cross_entropy",
+        "focal_token",
+        "self_critical_cider",
+        "temporal_contrastive"
+      ],
+      "evaluation": [
+        "CIDEr",
+        "BLEU_4",
+        "METEOR",
+        "temporal_grounding"
+      ]
+    },
+    {
+      "name": "llava_next_video",
+      "family": "LLaVA-NeXT-Video",
+      "task_kind": "video-to-text",
+      "source": {
+        "hub_id": "llava-hf/LLaVA-NeXT-Video-7B-hf",
+        "revision": "f417d9edeb69a9eaa88283780332d00ce3c66593",
+        "library": "transformers",
+        "class": "LlavaNextVideoForConditionalGeneration",
+        "source_file": "upstream/LlavaNextVideoForConditionalGeneration.py",
+        "trust_remote_code": false,
+        "license": "llama2",
+        "gated": false,
+        "pipeline_tag": "video-text-to-text",
+        "hub_library": "transformers",
+        "minimum_hardware": "gpu_24gb_or_more"
+      },
+      "losses": [
+        "token_cross_entropy",
+        "label_smoothed_cross_entropy",
+        "focal_token",
+        "self_critical_cider",
+        "temporal_contrastive"
+      ],
+      "evaluation": [
+        "CIDEr",
+        "BLEU_4",
+        "METEOR",
+        "temporal_grounding"
+      ]
+    },
+    {
+      "name": "instructblip_video",
+      "family": "InstructBLIP Video",
+      "task_kind": "video-to-text",
+      "source": {
+        "hub_id": "Salesforce/instructblip-flan-t5-xl",
+        "revision": "bf9bd58cb3bb06e88c03b80f9cc346b90094bc6d",
+        "library": "transformers",
+        "class": "InstructBlipForConditionalGeneration",
+        "source_file": "upstream/InstructBlipForConditionalGeneration.py",
+        "trust_remote_code": false,
+        "license": "mit",
+        "gated": false,
+        "pipeline_tag": "image-text-to-text",
+        "hub_library": "transformers",
+        "minimum_hardware": "gpu_24gb_or_more"
+      },
+      "losses": [
+        "token_cross_entropy",
+        "label_smoothed_cross_entropy",
+        "focal_token",
+        "self_critical_cider",
+        "temporal_contrastive"
+      ],
+      "evaluation": [
+        "CIDEr",
+        "BLEU_4",
+        "METEOR",
+        "temporal_grounding"
+      ]
+    },
+    {
+      "name": "videollama3",
+      "family": "VideoLLaMA3",
+      "task_kind": "video-to-text",
+      "source": {
+        "hub_id": "DAMO-NLP-SG/VideoLLaMA3-7B",
+        "revision": "d5b763e368861e7f5096e7ff1b49f92fbccf8ae6",
+        "library": "transformers",
+        "class": "VideoLlama3ForConditionalGeneration",
+        "source_file": "upstream/VideoLlama3ForConditionalGeneration.py",
+        "trust_remote_code": false,
+        "license": "apache-2.0",
+        "gated": false,
+        "pipeline_tag": "video-text-to-text",
+        "hub_library": "transformers",
+        "minimum_hardware": "gpu_24gb_or_more"
+      },
+      "losses": [
+        "token_cross_entropy",
+        "label_smoothed_cross_entropy",
+        "focal_token",
+        "self_critical_cider",
+        "temporal_contrastive"
+      ],
+      "evaluation": [
+        "CIDEr",
+        "BLEU_4",
+        "METEOR",
+        "temporal_grounding"
+      ]
+    }
+  ]
+}
