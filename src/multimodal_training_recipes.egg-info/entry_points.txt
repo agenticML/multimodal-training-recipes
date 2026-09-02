@@ -1,2 +1,0 @@
-[console_scripts]
-training-recipe = training_recipes.cli:main

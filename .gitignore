@@ -6,3 +6,4 @@
 outputs/
 .cache/
 *.log
+*.egg-info*
