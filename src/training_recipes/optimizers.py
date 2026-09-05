@@ -55,7 +55,7 @@ def create_optimizer(parameters, config: dict) -> torch.optim.Optimizer:
         try:
             from transformers.optimization import Adafactor
         except ImportError as exc:
-            raise RuntimeError("Adafactor requires the 'hf' dependency group") from exc
+            raise RuntimeError("Adafactor requires transformers") from exc
         return Adafactor(parameters, lr=lr, relative_step=False, scale_parameter=False)
     if name == "adam8bit":
         try:

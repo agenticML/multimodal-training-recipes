@@ -10,10 +10,10 @@ Python 3.10 or newer and PyTorch are required. From this directory:
 uv sync --extra dev
 ```
 
-`transformers` and `diffusers` are main dependencies so dummy/smoke runs can construct Hub classes offline. Install extra media and Hub tooling when running full recipes:
+The default install includes Hugging Face, media, tokenizer, audio/video, and LoRA packages used by the Hub-backed recipes. Dummy/smoke runs construct Hub classes offline (`from_config`, no weight download). Add 8-bit Adam and VITS phonemizer extras for those optional paths, and the dashboard extra for the local UI:
 
 ```bash
-uv sync --extra all --extra dev
+uv sync --extra all --extra dashboard --extra dev
 ```
 
 Dummy/smoke runs instantiate the pinned Hub class from a tiny random config (`from_config`, no weight download) and train one step on dummy tensors shaped for that architecture. `--architecture wav2vec2` therefore tracks `Wav2Vec2ForCTC`, not a surrogate. Six custom/mlx recipes (`audiosr`, `flashsr`, `nuwave2`, `aero`, `universr`, `stylegan2_ada`) are skipped. Full configs still identify the upstream checkpoint and fine-tuning policy and require real preprocessed data plus suitable accelerators.
