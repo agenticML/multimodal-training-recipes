@@ -80,6 +80,22 @@ training-recipe-offline --task asr --architecture wav2vec2 --profile smoke \
   --tracker-mode offline --agenticml-asset-dir /path/to/agenticml-assets
 ```
 
+## Local smoke dashboard
+
+A localhost FastAPI UI lists catalog tasks and architectures, runs one smoke dummy at a time via `training-recipe-offline`, and shows captured AgenticML code assets.
+
+```bash
+# uses the activated venv (VIRTUAL_ENV), else .venv, else python3
+./scripts/start_dashboard.sh           # 127.0.0.1:8000
+./scripts/start_dashboard.sh 8080
+AGENTICML_ASSET_DIR=/tmp/aml-assets ./scripts/start_dashboard.sh 8080
+PYTHON=/path/to/venv/bin/python ./scripts/start_dashboard.sh 8080
+```
+
+Install FastAPI and Uvicorn in that environment (`uv sync --extra dashboard` or `pip install '.[dashboard]'`).
+
+Profile is locked to `smoke` and tracking to `offline`. Journals land under `AGENTICML_ASSET_DIR` or `agenticml-assets/` at the repo root. Custom/mlx architectures are listed but not runnable.
+
 ## Validate and test everything
 
 ```bash

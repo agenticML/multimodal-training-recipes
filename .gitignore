@@ -8,3 +8,4 @@ outputs/
 *.log
 *.egg-info*
 *agenticml-asset-temp/*
+agenticml-assets/

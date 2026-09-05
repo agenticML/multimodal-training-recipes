@@ -1,0 +1,58 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>Smoke dashboard</title>
+    <link rel="stylesheet" href="/static/styles.css" />
+  </head>
+  <body>
+    <header class="top">
+      <div>
+        <h1>Smoke dashboard</h1>
+        <p class="subtitle">Local dummy runs with offline AgenticML tracking</p>
+      </div>
+      <div class="chips" id="chips">
+        <span class="chip">profile = smoke</span>
+        <span class="chip">tracker = offline</span>
+        <span class="chip" id="asset-chip">asset dir</span>
+      </div>
+    </header>
+    <main class="layout">
+      <aside class="rail">
+        <section>
+          <h2>Tasks</h2>
+          <ul id="task-list" class="list"></ul>
+        </section>
+        <section>
+          <h2>Architectures</h2>
+          <p id="arch-hint" class="hint">Select a task</p>
+          <ul id="arch-list" class="list"></ul>
+        </section>
+      </aside>
+      <section class="stage">
+        <div class="toolbar">
+          <div id="selection" class="selection">No architecture selected</div>
+          <button id="run-btn" type="button" disabled>Run</button>
+        </div>
+        <p id="status-line" class="status">Idle</p>
+        <div class="panel">
+          <h2>Logs</h2>
+          <pre id="logs" class="logs"></pre>
+        </div>
+        <div id="summary-panel" class="panel hidden">
+          <h2>Summary</h2>
+          <dl id="summary" class="summary"></dl>
+        </div>
+        <div id="assets-panel" class="panel hidden">
+          <h2>Code assets</h2>
+          <div class="assets">
+            <nav id="file-tree" class="tree"></nav>
+            <pre id="file-view" class="viewer">Select a file</pre>
+          </div>
+        </div>
+      </section>
+    </main>
+    <script src="/static/app.js"></script>
+  </body>
+</html>
