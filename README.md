@@ -10,13 +10,13 @@ Python 3.10 or newer and PyTorch are required. From this directory:
 uv sync --extra dev
 ```
 
-Install Hugging Face and media integrations when running full recipes:
+`transformers` and `diffusers` are main dependencies so dummy/smoke runs can construct Hub classes offline. Install extra media and Hub tooling when running full recipes:
 
 ```bash
 uv sync --extra all --extra dev
 ```
 
-The lightweight smoke suite does not download pretrained weights. It uses small task-contract models to validate data shapes, configured objectives, backward propagation, optimization, and artifacts for all 80 recipes. Full configs carry the pinned upstream model class and fine-tuning policy and require the modality dependencies, real preprocessed data, and suitable accelerators.
+Dummy/smoke runs instantiate the pinned Hub class from a tiny random config (`from_config`, no weight download) and train one step on dummy tensors shaped for that architecture. `--architecture wav2vec2` therefore tracks `Wav2Vec2ForCTC`, not a surrogate. Six custom/mlx recipes (`audiosr`, `flashsr`, `nuwave2`, `aero`, `universr`, `stylegan2_ada`) are skipped. Full configs still identify the upstream checkpoint and fine-tuning policy and require real preprocessed data plus suitable accelerators.
 
 ## Run one recipe
 
@@ -58,6 +58,28 @@ Resume or force cached/offline model resolution with:
 ./tasks/llm/train.sh --architecture gpt2 --profile smoke --offline
 ```
 
+`--offline` only disables Hugging Face hub downloads. It does not change experiment tracking.
+
+## Experiment tracking
+
+Every CLI run is tracked with [AgenticML](https://agenticml.xyz) (`pip install agenticml-py`, `import agenticml`). The default mode is offline, with journals under `outputs/<task>/<architecture>/agenticml/` next to the usual run artifacts.
+
+```bash
+./tasks/asr/train.sh --architecture wav2vec2 --profile smoke
+./tasks/asr/train.sh --architecture wav2vec2 --profile smoke --no-track
+./tasks/asr/train.sh --architecture wav2vec2 --profile smoke \
+  --tracker-mode online --tracker-project multimodal-training-recipes
+```
+
+Online mode needs `AGENTICML_API_KEY` (and optionally `AGENTICML_HOST` / `AGENTICML_MODE`). Use `--no-track` or `--tracker-mode disabled` to skip tracking, `--tracker-name` / `--tracker-group` / `--tracker-offline-dir` / `--agenticml-asset-dir` to override identity and the offline journal root.
+
+There is a dedicated offline entrypoint that always uses `--tracker-mode offline` and requires `--agenticml-asset-dir`:
+
+```bash
+training-recipe-offline --task asr --architecture wav2vec2 --profile smoke \
+  --tracker-mode offline --agenticml-asset-dir /path/to/agenticml-assets
+```
+
 ## Validate and test everything
 
 ```bash
@@ -66,7 +88,7 @@ uv run pytest
 uv run ./scripts/smoke_all.sh --steps 1
 ```
 
-The complete smoke command executes one real forward/backward/optimizer step for all 80 configurations. Restrict it to one task with `--task video_classification` or retain artifacts with `--output-dir /path/to/output`.
+The complete smoke command executes one real forward/backward/optimizer step for the 74 Hub-backed recipes and skips the six custom/mlx architectures. Restrict it to one task with `--task video_classification` or retain artifacts with `--output-dir /path/to/output`. Smoke and `training-recipe-offline` smoke runs do not need `--dataset-path`.
 
 To detect whether an upstream repository has moved past the reviewed commit:
 

@@ -1,0 +1,23 @@
+"""Shared tiny shapes for dummy Hub models and tensors (no weight download)."""
+
+from __future__ import annotations
+
+TINY_HIDDEN = 32
+TINY_HEADS = 4
+TINY_HEAD_DIM = 8
+TINY_FFN = 64
+TINY_LAYERS = 1
+TINY_VOCAB = 64
+TINY_SEQ = 8
+TINY_IMAGE = 32
+TINY_PATCH = 16
+TINY_FRAMES = 4
+TINY_AUDIO_LEN = 64
+TINY_MEL_BINS = 80
+TINY_MEL_TIME = 16
+TINY_LATENT = 16
+TINY_IN_CHANNELS = 4
+TINY_CROSS_DIM = 32
+TINY_TIME = 16
+TINY_TS_CHANNELS = 2
+TINY_WINDOW = 2
