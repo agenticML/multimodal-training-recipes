@@ -2,7 +2,9 @@
 
 from __future__ import annotations
 
+import inspect
 import math
+import os
 from collections.abc import Iterable
 from pathlib import Path
 from typing import Any
@@ -104,6 +106,27 @@ def _resolved_tracking(config: dict, output_dir: Path) -> dict[str, Any]:
     }
 
 
+def _run_accepts_offline_dir(agenticml) -> bool:
+    """PyPI 0.0.2 forwards unknown init kwargs into Run and then rejects them.
+
+    Inspect ``Run.__init__`` (not ``init``) because older ``init`` has ``**kwargs``.
+    """
+    run_cls = getattr(agenticml, "Run", None)
+    if run_cls is None:
+        return False
+    try:
+        parameters = inspect.signature(run_cls.__init__).parameters
+    except (TypeError, ValueError):
+        return False
+    return "offline_dir" in parameters
+
+
+def _call_if_present(agenticml, method: str, *args, **kwargs) -> None:
+    fn = getattr(agenticml, method, None)
+    if callable(fn):
+        fn(*args, **kwargs)
+
+
 def start_run(config: dict, output_dir: str | Path) -> None:
     global _active
     _active = False
@@ -122,7 +145,10 @@ def start_run(config: dict, output_dir: str | Path) -> None:
         "track_source": "runtime",
     }
     if tracking["mode"] == "offline":
-        init_kwargs["offline_dir"] = tracking["offline_dir"]
+        # 0.0.2 only honors AGENTICML_OFFLINE_DIR. Newer SDKs also take offline_dir=.
+        os.environ["AGENTICML_OFFLINE_DIR"] = tracking["offline_dir"]
+        if _run_accepts_offline_dir(agenticml):
+            init_kwargs["offline_dir"] = tracking["offline_dir"]
     agenticml.init(**init_kwargs)
     _active = True
 
@@ -138,11 +164,11 @@ def track_components(
     if not _active:
         return
     agenticml = _load_agenticml()
-    agenticml.track_model(model)
-    agenticml.track_optimizer(optimizer)
-    agenticml.track_loss(loss_fn)
-    agenticml.track_dataloader(dataset, name="train_dataset")
-    agenticml.track_dataloader(loader, name="train")
+    _call_if_present(agenticml, "track_model", model)
+    _call_if_present(agenticml, "track_optimizer", optimizer)
+    _call_if_present(agenticml, "track_loss", loss_fn)
+    _call_if_present(agenticml, "track_dataloader", dataset, name="train_dataset")
+    _call_if_present(agenticml, "track_dataloader", loader, name="train")
     paths = [str(path) for path in extra_files or ()]
     if paths:
         agenticml.track_files(*paths)

@@ -428,6 +428,8 @@ class RunManager:
     def _run_process(self, run: RunState) -> None:
         env = os.environ.copy()
         env["PYTHONUNBUFFERED"] = "1"
+        env["AGENTICML_MODE"] = "offline"
+        env["AGENTICML_OFFLINE_DIR"] = str(run.run_dir)
         command = _offline_command(run.task, run.architecture, run.run_dir)
         try:
             process = subprocess.Popen(

@@ -1,3 +1,4 @@
+import os
 import sys
 from unittest.mock import MagicMock
 
@@ -21,10 +22,22 @@ def _smoke_config(tmp_path, *, save_checkpoint=True):
     return config, task, architecture
 
 
+class _RunWithOfflineDir:
+    def __init__(self, project, name, mode="online", offline_dir=None, **kwargs):
+        del project, name, mode, offline_dir, kwargs
+
+
+class _RunWithoutOfflineDir:
+    def __init__(self, project, name, mode="online", **kwargs):
+        del project, name, mode, kwargs
+
+
 def test_trainer_records_agenticml_run(tmp_path, monkeypatch):
     mock = MagicMock()
+    mock.Run = _RunWithOfflineDir
     monkeypatch.setitem(sys.modules, "agenticml", mock)
     config, task, architecture = _smoke_config(tmp_path)
+    expected_offline = str(tmp_path / task / architecture / "agenticml")
 
     summary = train(config)
 
@@ -37,7 +50,8 @@ def test_trainer_records_agenticml_run(tmp_path, monkeypatch):
     assert init_kwargs["group"] == task
     assert init_kwargs["job_type"] == "smoke"
     assert init_kwargs["track_source"] == "runtime"
-    assert init_kwargs["offline_dir"] == str(tmp_path / task / architecture / "agenticml")
+    assert init_kwargs["offline_dir"] == expected_offline
+    assert os.environ["AGENTICML_OFFLINE_DIR"] == expected_offline
     mock.track_model.assert_called_once()
     assert type(mock.track_model.call_args.args[0]).__name__ == "Wav2Vec2ForCTC"
     mock.track_optimizer.assert_called_once()
@@ -76,6 +90,7 @@ def test_disabled_tracking_skips_agenticml(tmp_path, monkeypatch):
 
 def test_online_mode_omits_offline_dir(tmp_path, monkeypatch):
     mock = MagicMock()
+    mock.Run = _RunWithOfflineDir
     monkeypatch.setitem(sys.modules, "agenticml", mock)
     config, _, _ = _smoke_config(tmp_path, save_checkpoint=False)
     config.setdefault("tracking", {})["mode"] = "online"
@@ -84,6 +99,20 @@ def test_online_mode_omits_offline_dir(tmp_path, monkeypatch):
 
     assert "offline_dir" not in mock.init.call_args.kwargs
     assert mock.init.call_args.kwargs["mode"] == "online"
+
+
+def test_offline_dir_uses_env_when_sdk_rejects_kwarg(tmp_path, monkeypatch):
+    mock = MagicMock()
+    mock.Run = _RunWithoutOfflineDir
+    monkeypatch.setitem(sys.modules, "agenticml", mock)
+    config, task, architecture = _smoke_config(tmp_path, save_checkpoint=False)
+    expected_offline = str(tmp_path / task / architecture / "agenticml")
+
+    train(config)
+
+    assert os.environ["AGENTICML_OFFLINE_DIR"] == expected_offline
+    assert "offline_dir" not in mock.init.call_args.kwargs
+    assert mock.init.call_args.kwargs["mode"] == "offline"
 
 
 def test_missing_agenticml_raises_when_enabled(tmp_path, monkeypatch):
