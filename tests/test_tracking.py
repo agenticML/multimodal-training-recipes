@@ -1,3 +1,4 @@
+import json
 import os
 import sys
 from unittest.mock import MagicMock
@@ -61,7 +62,16 @@ def test_trainer_records_agenticml_run(tmp_path, monkeypatch):
     assert dataloader_names == ["train_dataset", "train"]
     mock.track_files.assert_called_once()
     tracked_files = mock.track_files.call_args.args
-    assert str(tmp_path / task / architecture / "resolved_config.json") in tracked_files
+    run_dir = tmp_path / task / architecture
+    assert str(run_dir / "resolved_config.json") in tracked_files
+    assert str(run_dir / "model_config.json") in tracked_files
+    assert str(run_dir / "batch_shapes.json") in tracked_files
+    model_config = json.loads((run_dir / "model_config.json").read_text(encoding="utf-8"))
+    assert model_config["model_type"] == "wav2vec2"
+    batch_shapes = json.loads((run_dir / "batch_shapes.json").read_text(encoding="utf-8"))
+    assert batch_shapes["batch_size"] == config["training"]["batch_size"]
+    assert batch_shapes["input_values"][0] == config["training"]["batch_size"]
+    assert all(isinstance(dim, int) for name, shape in batch_shapes.items() if name != "batch_size" for dim in shape)
     mock.log.assert_called()
     logged = mock.log.call_args
     assert logged.kwargs["step"] == 1

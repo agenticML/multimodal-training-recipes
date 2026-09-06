@@ -61,6 +61,23 @@ def train(config: dict) -> dict:
     output_dir = Path(config.get("output_dir", "outputs")) / config["task"] / config["architecture"]
     output_dir.mkdir(parents=True, exist_ok=True)
     save_json(output_dir / "resolved_config.json", config)
+    config_obj = getattr(model, "config", None)
+    save_json(
+        output_dir / "model_config.json",
+        config_obj.to_dict() if hasattr(config_obj, "to_dict") else {},
+    )
+    first_batch = next(iter(loader))
+    save_json(
+        output_dir / "batch_shapes.json",
+        {
+            "batch_size": int(training["batch_size"]),
+            **{
+                name: list(value.shape)
+                for name, value in first_batch.items()
+                if torch.is_tensor(value)
+            },
+        },
+    )
     metrics_path = output_dir / "metrics.jsonl"
     step = 0
     resume_from = training.get("resume_from")
@@ -80,7 +97,11 @@ def train(config: dict) -> dict:
             forward_and_loss,
             dataset,
             loader,
-            extra_files=(output_dir / "resolved_config.json",),
+            extra_files=(
+                output_dir / "resolved_config.json",
+                output_dir / "model_config.json",
+                output_dir / "batch_shapes.json",
+            ),
         )
         with metrics_path.open("w", encoding="utf-8") as metrics_file:
             while step < int(training["max_steps"]):
