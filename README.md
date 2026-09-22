@@ -73,6 +73,20 @@ Every CLI run is tracked with [AgenticML](https://agenticml.xyz) (`pip install a
 
 Online mode needs `AGENTICML_API_KEY` (and optionally `AGENTICML_HOST` / `AGENTICML_MODE`). Use `--no-track` or `--tracker-mode disabled` to skip tracking, `--tracker-name` / `--tracker-group` / `--tracker-offline-dir` / `--agenticml-asset-dir` to override identity and the offline journal root.
 
+For an online run against an explicit AgenticML host, set the API key in the
+environment and use the online launcher:
+
+```bash
+export AGENTICML_API_KEY="your-api-key"
+./scripts/run-online.sh \
+  --task asr --architecture wav2vec2 --profile smoke
+```
+
+The launcher defaults `AGENTICML_HOST` to `https://api.agenticml.xyz`, forces
+`--tracker-mode online`, and forwards the remaining options to the standard CLI.
+To use another server, put `--agenticml-host URL` before the recipe arguments.
+Keep the API key out of the script and repository.
+
 There is a dedicated offline entrypoint that always uses `--tracker-mode offline` and requires `--agenticml-asset-dir`:
 
 ```bash
