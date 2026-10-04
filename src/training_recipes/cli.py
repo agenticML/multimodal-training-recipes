@@ -62,10 +62,30 @@ def build_parser(*, offline_tracking: bool = False) -> argparse.ArgumentParser:
             "--agenticml-asset-dir",
             help="Directory for AgenticML offline journals and collected assets",
         )
+    _add_auto_tracking_arguments(parser)
     parser.add_argument(
         "--list", action="store_true", help="List architectures for the selected task"
     )
     return parser
+
+
+def _add_auto_tracking_arguments(parser: argparse.ArgumentParser) -> None:
+    group = parser.add_mutually_exclusive_group()
+    group.add_argument(
+        "--auto-tracking",
+        dest="auto_tracking",
+        action="store_const",
+        const=True,
+        default=None,
+        help="Detect model, optimizer, loss, and dataloader with AgenticML auto_track",
+    )
+    group.add_argument(
+        "--no-auto-tracking",
+        dest="auto_tracking",
+        action="store_const",
+        const=False,
+        help="Record model, optimizer, loss, and dataloader with explicit track calls",
+    )
 
 
 def _asset_dir(args: argparse.Namespace) -> str | None:
@@ -112,6 +132,9 @@ def apply_cli_overrides(args: argparse.Namespace, config: dict) -> dict:
         tracking["group"] = args.tracker_group
     else:
         tracking.setdefault("group", config["task"])
+    auto_tracking = getattr(args, "auto_tracking", None)
+    if auto_tracking is not None:
+        tracking["auto_tracking"] = auto_tracking
     config["tracking"] = tracking
     config.pop("_compatible_losses", None)
     return config

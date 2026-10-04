@@ -93,6 +93,7 @@ def _resolved_tracking(config: dict, output_dir: Path) -> dict[str, Any]:
     return {
         "enabled": bool(enabled),
         "mode": mode,
+        "auto_tracking": bool(tracking.get("auto_tracking", False)),
         "project": tracking.get("project") or "multimodal-training-recipes",
         "name": name,
         "offline_dir": offline_dir,
@@ -106,19 +107,27 @@ def _resolved_tracking(config: dict, output_dir: Path) -> dict[str, Any]:
     }
 
 
-def _run_accepts_offline_dir(agenticml) -> bool:
+def _run_init_parameters(agenticml) -> set[str]:
     """PyPI 0.0.2 forwards unknown init kwargs into Run and then rejects them.
 
     Inspect ``Run.__init__`` (not ``init``) because older ``init`` has ``**kwargs``.
     """
     run_cls = getattr(agenticml, "Run", None)
     if run_cls is None:
-        return False
+        return set()
     try:
         parameters = inspect.signature(run_cls.__init__).parameters
     except (TypeError, ValueError):
-        return False
-    return "offline_dir" in parameters
+        return set()
+    return set(parameters)
+
+
+def _run_accepts_offline_dir(agenticml) -> bool:
+    return "offline_dir" in _run_init_parameters(agenticml)
+
+
+def _run_accepts_auto_track(agenticml) -> bool:
+    return "auto_track" in _run_init_parameters(agenticml)
 
 
 def _call_if_present(agenticml, method: str, *args, **kwargs) -> None:
@@ -149,6 +158,13 @@ def start_run(config: dict, output_dir: str | Path) -> None:
         os.environ["AGENTICML_OFFLINE_DIR"] = tracking["offline_dir"]
         if _run_accepts_offline_dir(agenticml):
             init_kwargs["offline_dir"] = tracking["offline_dir"]
+    if tracking["auto_tracking"] and not _run_accepts_auto_track(agenticml):
+        raise RuntimeError(
+            "tracking.auto_tracking is enabled, but this agenticml build does not "
+            "accept auto_track. Upgrade agenticml-py to a version that supports it."
+        )
+    if _run_accepts_auto_track(agenticml):
+        init_kwargs["auto_track"] = tracking["auto_tracking"]
     agenticml.init(**init_kwargs)
     _active = True
 
@@ -160,15 +176,21 @@ def track_components(
     dataset,
     loader,
     extra_files: Iterable[str | Path] | None = None,
+    *,
+    auto_tracking: bool = False,
 ) -> None:
     if not _active:
         return
     agenticml = _load_agenticml()
-    _call_if_present(agenticml, "track_model", model)
-    _call_if_present(agenticml, "track_optimizer", optimizer)
-    _call_if_present(agenticml, "track_loss", loss_fn)
-    _call_if_present(agenticml, "track_dataloader", dataset, name="train_dataset")
-    _call_if_present(agenticml, "track_dataloader", loader, name="train")
+    if not auto_tracking:
+        print("Tracking components MANUALLY")
+        _call_if_present(agenticml, "track_model", model)
+        _call_if_present(agenticml, "track_optimizer", optimizer)
+        _call_if_present(agenticml, "track_loss", loss_fn)
+        _call_if_present(agenticml, "track_dataloader", dataset, name="train_dataset")
+        _call_if_present(agenticml, "track_dataloader", loader, name="train")
+    else:
+        print("Tracking components AUTOMATICALLY")
     paths = [str(path) for path in extra_files or ()]
     if paths:
         agenticml.track_files(*paths)

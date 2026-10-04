@@ -102,6 +102,7 @@ def train(config: dict) -> dict:
                 output_dir / "model_config.json",
                 output_dir / "batch_shapes.json",
             ),
+            auto_tracking=bool((config.get("tracking") or {}).get("auto_tracking", False)),
         )
         with metrics_path.open("w", encoding="utf-8") as metrics_file:
             while step < int(training["max_steps"]):

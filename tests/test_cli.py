@@ -58,6 +58,43 @@ def test_offline_entrypoint_rejects_online_mode():
         )
 
 
+def test_auto_tracking_flags_write_config():
+    base = {
+        "task": "asr",
+        "data": {},
+        "loss": [{"name": "ctc"}],
+        "optimizer": {},
+        "training": {},
+    }
+    enabled = build_parser().parse_args(
+        ["--task", "asr", "--architecture", "wav2vec2", "--auto-tracking"]
+    )
+    enabled_config = dict(base)
+    apply_cli_overrides(enabled, enabled_config)
+    assert enabled_config["tracking"]["auto_tracking"] is True
+
+    disabled = build_parser(offline_tracking=True).parse_args(
+        [
+            "--task",
+            "asr",
+            "--architecture",
+            "wav2vec2",
+            "--agenticml-asset-dir",
+            "/tmp/assets",
+            "--no-auto-tracking",
+        ]
+    )
+    disabled_config = dict(base)
+    apply_cli_overrides(disabled, disabled_config)
+    assert disabled_config["tracking"]["auto_tracking"] is False
+
+    untouched = build_parser().parse_args(["--task", "asr", "--architecture", "wav2vec2"])
+    preset = dict(base)
+    preset["tracking"] = {"auto_tracking": True}
+    apply_cli_overrides(untouched, preset)
+    assert preset["tracking"]["auto_tracking"] is True
+
+
 def test_main_cli_accepts_agenticml_asset_dir_alias(tmp_path):
     parser = build_parser()
     args = parser.parse_args(

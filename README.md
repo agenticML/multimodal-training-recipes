@@ -73,6 +73,8 @@ Every CLI run is tracked with [AgenticML](https://agenticml.xyz) (`pip install a
 
 Online mode needs `AGENTICML_API_KEY` (and optionally `AGENTICML_HOST` / `AGENTICML_MODE`). Use `--no-track` or `--tracker-mode disabled` to skip tracking, `--tracker-name` / `--tracker-group` / `--tracker-offline-dir` / `--agenticml-asset-dir` to override identity and the offline journal root.
 
+`tracking.auto_tracking` defaults to false: the recipe passes `auto_track=False` and records the model, optimizer, loss, and dataloaders with explicit track calls. `--auto-tracking` sets `auto_track=True` and leaves those objects to AgenticML's training-loop detection. Both modes still attach `resolved_config.json`, `model_config.json`, and `batch_shapes.json` through `track_files`.
+
 For an online run against an explicit AgenticML host, set the API key in the
 environment and use the online launcher:
 

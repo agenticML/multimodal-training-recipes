@@ -24,8 +24,8 @@ def _smoke_config(tmp_path, *, save_checkpoint=True):
 
 
 class _RunWithOfflineDir:
-    def __init__(self, project, name, mode="online", offline_dir=None, **kwargs):
-        del project, name, mode, offline_dir, kwargs
+    def __init__(self, project, name, mode="online", offline_dir=None, auto_track=True, **kwargs):
+        del project, name, mode, offline_dir, auto_track, kwargs
 
 
 class _RunWithoutOfflineDir:
@@ -51,6 +51,7 @@ def test_trainer_records_agenticml_run(tmp_path, monkeypatch):
     assert init_kwargs["group"] == task
     assert init_kwargs["job_type"] == "smoke"
     assert init_kwargs["track_source"] == "runtime"
+    assert init_kwargs["auto_track"] is False
     assert init_kwargs["offline_dir"] == expected_offline
     assert os.environ["AGENTICML_OFFLINE_DIR"] == expected_offline
     mock.track_model.assert_called_once()
@@ -122,7 +123,43 @@ def test_offline_dir_uses_env_when_sdk_rejects_kwarg(tmp_path, monkeypatch):
 
     assert os.environ["AGENTICML_OFFLINE_DIR"] == expected_offline
     assert "offline_dir" not in mock.init.call_args.kwargs
+    assert "auto_track" not in mock.init.call_args.kwargs
     assert mock.init.call_args.kwargs["mode"] == "offline"
+    mock.track_model.assert_called_once()
+    mock.track_optimizer.assert_called_once()
+    mock.track_loss.assert_called_once()
+    assert mock.track_dataloader.call_count == 2
+    mock.track_files.assert_called_once()
+
+
+def test_auto_tracking_skips_explicit_component_calls(tmp_path, monkeypatch):
+    mock = MagicMock()
+    mock.Run = _RunWithOfflineDir
+    monkeypatch.setitem(sys.modules, "agenticml", mock)
+    config, _, _ = _smoke_config(tmp_path, save_checkpoint=False)
+    config.setdefault("tracking", {})["auto_tracking"] = True
+
+    train(config)
+
+    assert mock.init.call_args.kwargs["auto_track"] is True
+    mock.track_model.assert_not_called()
+    mock.track_optimizer.assert_not_called()
+    mock.track_loss.assert_not_called()
+    mock.track_dataloader.assert_not_called()
+    mock.track_files.assert_called_once()
+
+
+def test_auto_tracking_requires_sdk_support(tmp_path, monkeypatch):
+    mock = MagicMock()
+    mock.Run = _RunWithoutOfflineDir
+    monkeypatch.setitem(sys.modules, "agenticml", mock)
+    config, _, _ = _smoke_config(tmp_path, save_checkpoint=False)
+    config.setdefault("tracking", {})["auto_tracking"] = True
+
+    with pytest.raises(RuntimeError, match="auto_track"):
+        train(config)
+
+    mock.init.assert_not_called()
 
 
 def test_missing_agenticml_raises_when_enabled(tmp_path, monkeypatch):
