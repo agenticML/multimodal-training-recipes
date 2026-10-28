@@ -188,8 +188,7 @@ h2 {
   display: none;
 }
 
-.logs,
-.viewer {
+.logs {
   margin: 0;
   min-height: 220px;
   max-height: 360px;
@@ -201,12 +200,6 @@ h2 {
   font: 12px/1.5 var(--mono);
   white-space: pre-wrap;
   word-break: break-word;
-}
-
-.viewer {
-  min-height: 280px;
-  max-height: 480px;
-  background: #0f172a;
 }
 
 .summary {
@@ -226,54 +219,8 @@ h2 {
   font-size: 13px;
 }
 
-.assets {
-  display: grid;
-  grid-template-columns: 280px 1fr;
-  gap: 12px;
-}
-
-.tree {
-  border: 1px solid var(--line);
-  border-radius: 6px;
-  padding: 8px;
-  max-height: 480px;
-  overflow: auto;
-  background: var(--bg);
-}
-
-.tree h3 {
-  margin: 10px 0 4px;
-  font-size: 11px;
-  text-transform: uppercase;
-  letter-spacing: 0.04em;
-  color: var(--muted);
-}
-
-.tree h3:first-child {
-  margin-top: 0;
-}
-
-.tree button {
-  display: block;
-  width: 100%;
-  text-align: left;
-  border: 0;
-  background: transparent;
-  padding: 4px 6px;
-  border-radius: 4px;
-  font: 12px/1.4 var(--mono);
-  color: inherit;
-  cursor: pointer;
-}
-
-.tree button:hover,
-.tree button.selected {
-  background: var(--panel);
-}
-
 @media (max-width: 900px) {
-  .layout,
-  .assets {
+  .layout {
     grid-template-columns: 1fr;
   }
 

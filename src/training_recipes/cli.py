@@ -12,13 +12,8 @@ from .registry import architecture_catalog, architecture_spec, recipe_path, task
 from .trainer import train
 
 
-def build_parser(*, offline_tracking: bool = False) -> argparse.ArgumentParser:
-    description = (
-        "Run a multimodal Hugging Face training recipe with offline AgenticML tracking"
-        if offline_tracking
-        else "Run a multimodal Hugging Face training recipe"
-    )
-    parser = argparse.ArgumentParser(description=description)
+def build_parser() -> argparse.ArgumentParser:
+    parser = argparse.ArgumentParser(description="Run a multimodal Hugging Face training recipe")
     parser.add_argument("--task", choices=task_names(), required=True)
     parser.add_argument("--architecture")
     parser.add_argument("--profile", choices=("smoke", "full"), default="smoke")
@@ -33,63 +28,10 @@ def build_parser(*, offline_tracking: bool = False) -> argparse.ArgumentParser:
     parser.add_argument("--resume-from")
     parser.add_argument("--output-dir")
     parser.add_argument("--offline", action="store_true")
-    if offline_tracking:
-        parser.add_argument(
-            "--tracker-mode",
-            choices=("offline",),
-            default="offline",
-            help="AgenticML tracker mode (this entrypoint is offline-only)",
-        )
-        parser.add_argument(
-            "--agenticml-asset-dir",
-            help="Directory for AgenticML offline journals and collected assets",
-        )
-        parser.add_argument("--tracker-project")
-        parser.add_argument("--tracker-name")
-        parser.add_argument("--tracker-group")
-    else:
-        parser.add_argument("--no-track", action="store_true")
-        parser.add_argument("--tracker-mode", choices=("online", "offline", "disabled"))
-        parser.add_argument("--tracker-project")
-        parser.add_argument("--tracker-name")
-        parser.add_argument("--tracker-group")
-        location = parser.add_mutually_exclusive_group()
-        location.add_argument(
-            "--tracker-offline-dir",
-            help="Directory for AgenticML offline journals (alias: --agenticml-asset-dir)",
-        )
-        location.add_argument(
-            "--agenticml-asset-dir",
-            help="Directory for AgenticML offline journals and collected assets",
-        )
-    _add_auto_tracking_arguments(parser)
     parser.add_argument(
         "--list", action="store_true", help="List architectures for the selected task"
     )
     return parser
-
-
-def _add_auto_tracking_arguments(parser: argparse.ArgumentParser) -> None:
-    group = parser.add_mutually_exclusive_group()
-    group.add_argument(
-        "--auto-tracking",
-        dest="auto_tracking",
-        action="store_const",
-        const=True,
-        default=None,
-        help="Detect model, optimizer, loss, and dataloader with AgenticML auto_track",
-    )
-    group.add_argument(
-        "--no-auto-tracking",
-        dest="auto_tracking",
-        action="store_const",
-        const=False,
-        help="Record model, optimizer, loss, and dataloader with explicit track calls",
-    )
-
-
-def _asset_dir(args: argparse.Namespace) -> str | None:
-    return getattr(args, "agenticml_asset_dir", None) or getattr(args, "tracker_offline_dir", None)
 
 
 def apply_cli_overrides(args: argparse.Namespace, config: dict) -> dict:
@@ -116,26 +58,6 @@ def apply_cli_overrides(args: argparse.Namespace, config: dict) -> dict:
         config["training"]["resume_from"] = args.resume_from
     if args.output_dir is not None:
         config["output_dir"] = args.output_dir
-    tracking = dict(config.get("tracking") or {})
-    if getattr(args, "no_track", False):
-        tracking["enabled"] = False
-    if getattr(args, "tracker_mode", None) is not None:
-        tracking["mode"] = args.tracker_mode
-    if args.tracker_project is not None:
-        tracking["project"] = args.tracker_project
-    if args.tracker_name is not None:
-        tracking["name"] = args.tracker_name
-    asset_dir = _asset_dir(args)
-    if asset_dir is not None:
-        tracking["offline_dir"] = asset_dir
-    if args.tracker_group is not None:
-        tracking["group"] = args.tracker_group
-    else:
-        tracking.setdefault("group", config["task"])
-    auto_tracking = getattr(args, "auto_tracking", None)
-    if auto_tracking is not None:
-        tracking["auto_tracking"] = auto_tracking
-    config["tracking"] = tracking
     config.pop("_compatible_losses", None)
     return config
 
@@ -158,15 +80,13 @@ def _build_config(args: argparse.Namespace) -> dict:
     return config
 
 
-def run(args: argparse.Namespace, *, require_asset_dir: bool = False) -> None:
+def run(args: argparse.Namespace) -> None:
     if args.list:
         for name, spec in architecture_catalog(args.task).items():
             print(f"{name:28} {spec['family']:24} {spec['source']['hub_id']}")
         return
     if not args.architecture:
         raise ValueError("--architecture is required unless --list is used")
-    if require_asset_dir and not _asset_dir(args):
-        raise ValueError("--agenticml-asset-dir is required")
     try:
         print(json.dumps(train(_build_config(args)), indent=2, sort_keys=True))
     except UnsupportedDummyArchitecture as exc:
@@ -175,10 +95,6 @@ def run(args: argparse.Namespace, *, require_asset_dir: bool = False) -> None:
 
 def main(argv: list[str] | None = None) -> None:
     run(build_parser().parse_args(argv))
-
-
-def main_offline(argv: list[str] | None = None) -> None:
-    run(build_parser(offline_tracking=True).parse_args(argv), require_asset_dir=True)
 
 
 if __name__ == "__main__":

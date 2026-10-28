@@ -4,21 +4,14 @@ from __future__ import annotations
 
 from pathlib import Path
 
-from fastapi import FastAPI, HTTPException, Query
+from fastapi import FastAPI, HTTPException
 from fastapi.responses import FileResponse, StreamingResponse
 from fastapi.staticfiles import StaticFiles
 from pydantic import BaseModel, Field
 
 from training_recipes.registry import architecture_catalog, task_names
 
-from .runner import (
-    AssetPathError,
-    RunManager,
-    collect_assets,
-    group_assets,
-    read_asset_file,
-    serialize_architecture,
-)
+from .runner import RunManager, serialize_architecture
 
 STATIC_DIR = Path(__file__).resolve().parent / "static"
 
@@ -42,21 +35,20 @@ def _architecture_or_404(task: str, architecture: str) -> dict:
     return spec
 
 
-def create_app(*, asset_dir: str | Path, host: str = "127.0.0.1") -> FastAPI:
-    asset_root = Path(asset_dir).expanduser().resolve()
-    asset_root.mkdir(parents=True, exist_ok=True)
-    runner = RunManager(asset_root)
+def create_app(*, output_dir: str | Path, host: str = "127.0.0.1") -> FastAPI:
+    output_root = Path(output_dir).expanduser().resolve()
+    output_root.mkdir(parents=True, exist_ok=True)
+    runner = RunManager(output_root)
     app = FastAPI(title="Smoke dashboard", docs_url=None, redoc_url=None)
     app.state.runner = runner
-    app.state.asset_dir = asset_root
+    app.state.output_dir = output_root
     app.state.host = host
 
     @app.get("/api/meta")
     def meta() -> dict:
         return {
             "profile": "smoke",
-            "tracker_mode": "offline",
-            "asset_dir": str(app.state.asset_dir),
+            "output_dir": str(app.state.output_dir),
             "host": app.state.host,
         }
 
@@ -114,31 +106,6 @@ def create_app(*, asset_dir: str | Path, host: str = "127.0.0.1") -> FastAPI:
                 "X-Accel-Buffering": "no",
             },
         )
-
-    @app.get("/api/runs/{run_id}/assets")
-    def run_assets(run_id: str) -> dict:
-        run = runner.get(run_id)
-        if run is None:
-            raise HTTPException(status_code=404, detail="unknown run")
-        offline_dir, files = collect_assets(run.run_dir)
-        return {
-            "run_id": run.id,
-            "status": run.status,
-            "offline_dir": None if offline_dir is None else str(offline_dir),
-            "groups": group_assets(files),
-        }
-
-    @app.get("/api/runs/{run_id}/assets/file")
-    def run_asset_file(run_id: str, path: str = Query(...)) -> dict:
-        run = runner.get(run_id)
-        if run is None:
-            raise HTTPException(status_code=404, detail="unknown run")
-        try:
-            return read_asset_file(run.run_dir, path)
-        except AssetPathError as exc:
-            message = str(exc)
-            status = 404 if "not found" in message else 400
-            raise HTTPException(status_code=status, detail=message) from exc
 
     @app.get("/")
     def index() -> FileResponse:

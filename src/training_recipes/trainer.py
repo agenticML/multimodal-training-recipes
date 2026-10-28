@@ -16,14 +16,6 @@ from .forward import forward_and_loss
 from .models import create_model
 from .optimizers import create_optimizer
 from .registry import architecture_spec
-from .tracking import (
-    finish_run,
-    log_run_artifacts,
-    log_step,
-    start_run,
-    track_components,
-    write_summary,
-)
 
 
 def _ensure_catalog_metadata(config: dict) -> dict:
@@ -88,63 +80,41 @@ def train(config: dict) -> dict:
         step = int(checkpoint["step"])
     last_loss = 0.0
     started = time.time()
-    success = False
-    try:
-        start_run(config, output_dir)
-        track_components(
-            model,
-            optimizer,
-            forward_and_loss,
-            dataset,
-            loader,
-            extra_files=(
-                output_dir / "resolved_config.json",
-                output_dir / "model_config.json",
-                output_dir / "batch_shapes.json",
-            ),
-            auto_tracking=bool((config.get("tracking") or {}).get("auto_tracking", False)),
+    with metrics_path.open("w", encoding="utf-8") as metrics_file:
+        while step < int(training["max_steps"]):
+            for raw_batch in loader:
+                batch = _to_device(raw_batch, device)
+                optimizer.zero_grad(set_to_none=True)
+                loss, components = forward_and_loss(model, batch, config["loss"])
+                if not torch.isfinite(loss):
+                    raise FloatingPointError(f"non-finite loss at step {step + 1}")
+                loss.backward()
+                if training.get("gradient_clip_norm"):
+                    torch.nn.utils.clip_grad_norm_(
+                        model.parameters(), float(training["gradient_clip_norm"])
+                    )
+                optimizer.step()
+                step += 1
+                last_loss = float(loss.detach())
+                record = {"step": step, "train/loss": last_loss, **components}
+                metrics_file.write(json.dumps(record, sort_keys=True) + "\n")
+                print(f"{config['task']}/{config['architecture']} step={step} loss={last_loss:.6f}")
+                if step >= int(training["max_steps"]):
+                    break
+    summary = {
+        "task": config["task"],
+        "architecture": config["architecture"],
+        "profile": config["profile"],
+        "steps": step,
+        "final_loss": last_loss,
+        "parameter_count": sum(parameter.numel() for parameter in model.parameters()),
+        "elapsed_seconds": time.time() - started,
+        "model_class": type(model).__name__,
+    }
+    save_json(output_dir / "summary.json", summary)
+    if bool(training.get("save_checkpoint", True)):
+        torch.save(
+            {"model": model.state_dict(), "optimizer": optimizer.state_dict(), "step": step},
+            output_dir / "checkpoint.pt",
         )
-        with metrics_path.open("w", encoding="utf-8") as metrics_file:
-            while step < int(training["max_steps"]):
-                for raw_batch in loader:
-                    batch = _to_device(raw_batch, device)
-                    optimizer.zero_grad(set_to_none=True)
-                    loss, components = forward_and_loss(model, batch, config["loss"])
-                    if not torch.isfinite(loss):
-                        raise FloatingPointError(f"non-finite loss at step {step + 1}")
-                    loss.backward()
-                    if training.get("gradient_clip_norm"):
-                        torch.nn.utils.clip_grad_norm_(
-                            model.parameters(), float(training["gradient_clip_norm"])
-                        )
-                    optimizer.step()
-                    step += 1
-                    last_loss = float(loss.detach())
-                    record = {"step": step, "train/loss": last_loss, **components}
-                    metrics_file.write(json.dumps(record, sort_keys=True) + "\n")
-                    log_step(record, step)
-                    print(f"{config['task']}/{config['architecture']} step={step} loss={last_loss:.6f}")
-                    if step >= int(training["max_steps"]):
-                        break
-        summary = {
-            "task": config["task"],
-            "architecture": config["architecture"],
-            "profile": config["profile"],
-            "steps": step,
-            "final_loss": last_loss,
-            "parameter_count": sum(parameter.numel() for parameter in model.parameters()),
-            "elapsed_seconds": time.time() - started,
-            "model_class": type(model).__name__,
-        }
-        save_json(output_dir / "summary.json", summary)
-        if bool(training.get("save_checkpoint", True)):
-            torch.save(
-                {"model": model.state_dict(), "optimizer": optimizer.state_dict(), "step": step},
-                output_dir / "checkpoint.pt",
-            )
-        write_summary(summary)
-        log_run_artifacts(output_dir)
-        success = True
-        return summary
-    finally:
-        finish_run(status="finished" if success else "crashed")
+    return summary

@@ -1,4 +1,4 @@
-"""Subprocess runner and AgenticML journal/code asset discovery."""
+"""Subprocess runner for smoke training recipes."""
 
 from __future__ import annotations
 
@@ -17,32 +17,6 @@ from training_recipes.models import (
     UNSUPPORTED_DUMMY_ARCHITECTURES,
     UNSUPPORTED_DUMMY_LIBRARIES,
 )
-
-TEXT_CAP_BYTES = 1_048_576
-BINARY_SUFFIXES = {".pt", ".pth", ".bin", ".npy", ".npz", ".safetensors", ".so", ".dylib", ".whl"}
-SOURCE_ORDER = (
-    "model",
-    "loss",
-    "dataloader",
-    "optimizer",
-    "runtime_import",
-    "runtime_read",
-    "extra",
-    "unknown",
-)
-
-
-class AssetPathError(ValueError):
-    """Raised when an asset path is missing, binary-only, or escapes the run directory."""
-
-
-@dataclass
-class AssetFile:
-    path: str
-    source: str
-    content_type: str | None = None
-    logical_path: str | None = None
-    size: int | None = None
 
 
 @dataclass
@@ -103,134 +77,6 @@ def serialize_architecture(task: str, name: str, spec: dict[str, Any]) -> dict[s
     }
 
 
-def discover_offline_dir(run_dir: Path) -> Path | None:
-    matches = sorted(path for path in run_dir.glob("offline-*") if path.is_dir())
-    if not matches:
-        return None
-    with_journal = [path for path in matches if (path / "journal.jsonl").is_file()]
-    return (with_journal or matches)[-1]
-
-
-def _source_from_code_path(relative: str) -> str:
-    parts = Path(relative).parts
-    if len(parts) >= 2 and parts[0] == "code":
-        top = parts[1]
-        if top in {"model", "loss", "dataloader", "optimizer"}:
-            return top
-        if top == "agenticml":
-            return "runtime_import"
-    return "unknown"
-
-
-def parse_journal_assets(journal_path: Path) -> list[AssetFile]:
-    sources: dict[str, dict[str, Any]] = {}
-    stored: dict[str, AssetFile] = {}
-    for raw in journal_path.read_text(encoding="utf-8").splitlines():
-        if not raw.strip():
-            continue
-        try:
-            event = json.loads(raw)
-        except json.JSONDecodeError:
-            continue
-        if event.get("kind") != "upload_code":
-            continue
-        payload = event.get("payload") or {}
-        manifest = payload.get("manifest") or {}
-        for item in manifest.get("files") or []:
-            path = item.get("path")
-            if not path:
-                continue
-            sources[path] = item
-        for item in payload.get("files") or []:
-            logical = item.get("path")
-            stored_at = item.get("stored_at") or (
-                f"code/{logical}" if logical else None
-            )
-            if not stored_at:
-                continue
-            meta = sources.get(logical or "", {})
-            stored[stored_at] = AssetFile(
-                path=stored_at,
-                source=str(meta.get("source") or _source_from_code_path(stored_at)),
-                content_type=item.get("content_type") or meta.get("content_type"),
-                logical_path=logical,
-                size=meta.get("size"),
-            )
-    return list(stored.values())
-
-
-def walk_code_fallback(offline_dir: Path) -> list[AssetFile]:
-    code_dir = offline_dir / "code"
-    if not code_dir.is_dir():
-        return []
-    files: list[AssetFile] = []
-    for path in sorted(code_dir.rglob("*")):
-        if not path.is_file():
-            continue
-        relative = path.relative_to(offline_dir).as_posix()
-        suffix = path.suffix.lower()
-        content_type = "text/x-python" if suffix == ".py" else None
-        files.append(
-            AssetFile(
-                path=relative,
-                source=_source_from_code_path(relative),
-                content_type=content_type,
-                size=path.stat().st_size,
-            )
-        )
-    return files
-
-
-def collect_assets(run_dir: Path) -> tuple[Path | None, list[AssetFile]]:
-    offline_dir = discover_offline_dir(run_dir)
-    if offline_dir is None:
-        return None, []
-    journal = offline_dir / "journal.jsonl"
-    files = parse_journal_assets(journal) if journal.is_file() else []
-    if not files:
-        files = walk_code_fallback(offline_dir)
-    return offline_dir, files
-
-
-def group_assets(files: list[AssetFile]) -> dict[str, list[dict[str, Any]]]:
-    groups: dict[str, list[dict[str, Any]]] = {}
-    for item in files:
-        groups.setdefault(item.source, []).append(
-            {
-                "path": item.path,
-                "source": item.source,
-                "content_type": item.content_type,
-                "logical_path": item.logical_path,
-                "size": item.size,
-            }
-        )
-    ordered: dict[str, list[dict[str, Any]]] = {}
-    for source in SOURCE_ORDER:
-        if source in groups:
-            ordered[source] = groups.pop(source)
-    for source in sorted(groups):
-        ordered[source] = groups[source]
-    return ordered
-
-
-def summary_from_journal(journal_path: Path) -> dict[str, Any] | None:
-    last: dict[str, Any] | None = None
-    for raw in journal_path.read_text(encoding="utf-8").splitlines():
-        if not raw.strip():
-            continue
-        try:
-            event = json.loads(raw)
-        except json.JSONDecodeError:
-            continue
-        if event.get("kind") != "finalize":
-            continue
-        payload = event.get("payload") or {}
-        summary = payload.get("summary")
-        if isinstance(summary, dict):
-            last = summary
-    return last
-
-
 def parse_summary_from_logs(lines: list[str]) -> dict[str, Any] | None:
     text = "\n".join(lines)
     decoder = json.JSONDecoder()
@@ -253,97 +99,26 @@ def parse_summary_from_logs(lines: list[str]) -> dict[str, Any] | None:
     return last
 
 
-def resolve_asset_path(run_dir: Path, requested: str) -> Path:
-    if not requested or requested.strip() != requested:
-        raise AssetPathError("path is required")
-    candidate = Path(requested)
-    if candidate.is_absolute() or ".." in candidate.parts:
-        raise AssetPathError("path escapes the run directory")
-    run_root = run_dir.resolve()
-    offline_dir = discover_offline_dir(run_root)
-    options = [run_root / candidate]
-    if offline_dir is not None:
-        options.append(offline_dir / candidate)
-    resolved: Path | None = None
-    for option in options:
-        try:
-            path = option.resolve()
-        except OSError as exc:
-            raise AssetPathError("invalid asset path") from exc
-        if path.exists() and path.is_relative_to(run_root):
-            resolved = path
-            break
-    if resolved is None:
-        probe = (run_root / candidate).resolve()
-        if not probe.is_relative_to(run_root):
-            raise AssetPathError("path escapes the run directory")
-        raise AssetPathError("asset not found")
-    if not resolved.is_file():
-        raise AssetPathError("asset not found")
-    return resolved
-
-
-def read_asset_file(run_dir: Path, requested: str) -> dict[str, Any]:
-    path = resolve_asset_path(run_dir, requested)
-    relative = path.relative_to(run_dir.resolve()).as_posix()
-    suffix = path.suffix.lower()
-    size = path.stat().st_size
-    if suffix in BINARY_SUFFIXES:
-        return {
-            "path": relative,
-            "binary": True,
-            "truncated": False,
-            "content": None,
-            "note": f"binary file skipped ({suffix})",
-            "size": size,
-        }
-    data = path.read_bytes()[:TEXT_CAP_BYTES]
-    truncated = size > TEXT_CAP_BYTES
-    try:
-        content = data.decode("utf-8")
-    except UnicodeDecodeError:
-        return {
-            "path": relative,
-            "binary": True,
-            "truncated": False,
-            "content": None,
-            "note": "binary file skipped (not valid UTF-8)",
-            "size": size,
-        }
-    payload: dict[str, Any] = {
-        "path": relative,
-        "binary": False,
-        "truncated": truncated,
-        "content": content,
-        "size": size,
-    }
-    if truncated:
-        payload["note"] = f"truncated to {TEXT_CAP_BYTES} bytes"
-    return payload
-
-
-def _offline_command(task: str, architecture: str, run_dir: Path) -> list[str]:
+def _smoke_command(task: str, architecture: str, run_dir: Path) -> list[str]:
     return [
         sys.executable,
         "-m",
-        "training_recipes.dashboard._offline_cli",
+        "training_recipes.cli",
         "--task",
         task,
         "--architecture",
         architecture,
         "--profile",
         "smoke",
-        "--tracker-mode",
-        "offline",
-        "--agenticml-asset-dir",
+        "--output-dir",
         str(run_dir),
     ]
 
 
 class RunManager:
-    def __init__(self, asset_dir: Path):
-        self.asset_dir = Path(asset_dir)
-        self.asset_dir.mkdir(parents=True, exist_ok=True)
+    def __init__(self, output_dir: Path):
+        self.output_dir = Path(output_dir)
+        self.output_dir.mkdir(parents=True, exist_ok=True)
         self._lock = threading.Lock()
         self._runs: dict[str, RunState] = {}
         self._active_id: str | None = None
@@ -360,7 +135,7 @@ class RunManager:
             if self._active_locked() is not None:
                 raise RuntimeError("a run is already in progress")
             run_id = uuid.uuid4().hex
-            run_dir = self.asset_dir / run_id
+            run_dir = self.output_dir / run_id
             run_dir.mkdir(parents=True, exist_ok=True)
             run = RunState(
                 id=run_id,
@@ -384,7 +159,7 @@ class RunManager:
         summary: dict[str, Any] | None = None,
     ) -> RunState:
         run_id = run_id or uuid.uuid4().hex
-        dest = Path(run_dir) if run_dir is not None else self.asset_dir / run_id
+        dest = Path(run_dir) if run_dir is not None else self.output_dir / run_id
         dest.mkdir(parents=True, exist_ok=True)
         run = RunState(
             id=run_id,
@@ -428,9 +203,7 @@ class RunManager:
     def _run_process(self, run: RunState) -> None:
         env = os.environ.copy()
         env["PYTHONUNBUFFERED"] = "1"
-        env["AGENTICML_MODE"] = "offline"
-        env["AGENTICML_OFFLINE_DIR"] = str(run.run_dir)
-        command = _offline_command(run.task, run.architecture, run.run_dir)
+        command = _smoke_command(run.task, run.architecture, run.run_dir)
         try:
             process = subprocess.Popen(
                 command,
@@ -460,10 +233,6 @@ class RunManager:
             self._clear_active(run.id)
             return
         summary = parse_summary_from_logs(run.logs)
-        offline_dir = discover_offline_dir(run.run_dir)
-        journal = None if offline_dir is None else offline_dir / "journal.jsonl"
-        if summary is None and journal is not None and journal.is_file():
-            summary = summary_from_journal(journal)
         with run.lock:
             run.returncode = returncode
             run.summary = summary

@@ -1,126 +1,12 @@
+import os
 from unittest.mock import patch
 
-import pytest
-
-from training_recipes.cli import apply_cli_overrides, build_parser, main_offline
+from training_recipes.cli import apply_cli_overrides, build_parser, main
 
 
-def test_offline_entrypoint_requires_agenticml_asset_dir():
-    with pytest.raises(ValueError, match="--agenticml-asset-dir is required"):
-        main_offline(["--task", "asr", "--architecture", "wav2vec2"])
-
-
-def test_offline_entrypoint_sets_offline_mode_and_asset_dir(tmp_path):
-    parser = build_parser(offline_tracking=True)
-    args = parser.parse_args(
-        [
-            "--task",
-            "asr",
-            "--architecture",
-            "wav2vec2",
-            "--tracker-mode",
-            "offline",
-            "--agenticml-asset-dir",
-            str(tmp_path / "assets"),
-        ]
-    )
-    assert args.tracker_mode == "offline"
-    assert args.agenticml_asset_dir == str(tmp_path / "assets")
-    config = {
-        "task": "asr",
-        "architecture": "wav2vec2",
-        "profile": "smoke",
-        "data": {},
-        "loss": [{"name": "ctc", "weight": 1.0}],
-        "optimizer": {"name": "adamw"},
-        "training": {},
-    }
-    apply_cli_overrides(args, config)
-    assert config["tracking"]["mode"] == "offline"
-    assert config["tracking"]["offline_dir"] == str(tmp_path / "assets")
-    assert config["tracking"]["group"] == "asr"
-
-
-def test_offline_entrypoint_rejects_online_mode():
-    parser = build_parser(offline_tracking=True)
-    with pytest.raises(SystemExit):
-        parser.parse_args(
-            [
-                "--task",
-                "asr",
-                "--architecture",
-                "wav2vec2",
-                "--tracker-mode",
-                "online",
-                "--agenticml-asset-dir",
-                "/tmp/assets",
-            ]
-        )
-
-
-def test_auto_tracking_flags_write_config():
-    base = {
-        "task": "asr",
-        "data": {},
-        "loss": [{"name": "ctc"}],
-        "optimizer": {},
-        "training": {},
-    }
-    enabled = build_parser().parse_args(
-        ["--task", "asr", "--architecture", "wav2vec2", "--auto-tracking"]
-    )
-    enabled_config = dict(base)
-    apply_cli_overrides(enabled, enabled_config)
-    assert enabled_config["tracking"]["auto_tracking"] is True
-
-    disabled = build_parser(offline_tracking=True).parse_args(
-        [
-            "--task",
-            "asr",
-            "--architecture",
-            "wav2vec2",
-            "--agenticml-asset-dir",
-            "/tmp/assets",
-            "--no-auto-tracking",
-        ]
-    )
-    disabled_config = dict(base)
-    apply_cli_overrides(disabled, disabled_config)
-    assert disabled_config["tracking"]["auto_tracking"] is False
-
-    untouched = build_parser().parse_args(["--task", "asr", "--architecture", "wav2vec2"])
-    preset = dict(base)
-    preset["tracking"] = {"auto_tracking": True}
-    apply_cli_overrides(untouched, preset)
-    assert preset["tracking"]["auto_tracking"] is True
-
-
-def test_main_cli_accepts_agenticml_asset_dir_alias(tmp_path):
-    parser = build_parser()
-    args = parser.parse_args(
-        [
-            "--task",
-            "asr",
-            "--architecture",
-            "wav2vec2",
-            "--agenticml-asset-dir",
-            str(tmp_path / "assets"),
-        ]
-    )
-    config = {
-        "task": "asr",
-        "data": {},
-        "loss": [{"name": "ctc"}],
-        "optimizer": {},
-        "training": {},
-    }
-    apply_cli_overrides(args, config)
-    assert config["tracking"]["offline_dir"] == str(tmp_path / "assets")
-
-
-def test_main_offline_invokes_train(tmp_path):
+def test_main_invokes_train(tmp_path):
     with patch("training_recipes.cli.train", return_value={"steps": 1}) as train:
-        main_offline(
+        main(
             [
                 "--task",
                 "asr",
@@ -132,13 +18,49 @@ def test_main_offline_invokes_train(tmp_path):
                 "1",
                 "--output-dir",
                 str(tmp_path),
-                "--tracker-mode",
-                "offline",
-                "--agenticml-asset-dir",
-                str(tmp_path / "assets"),
             ]
         )
     train.assert_called_once()
     config = train.call_args.args[0]
-    assert config["tracking"]["mode"] == "offline"
-    assert config["tracking"]["offline_dir"] == str(tmp_path / "assets")
+    assert config["task"] == "asr"
+    assert config["architecture"] == "wav2vec2"
+    assert config["profile"] == "smoke"
+    assert config["training"]["max_steps"] == 1
+    assert config["output_dir"] == str(tmp_path)
+
+
+def test_cli_overrides_training_fields(tmp_path):
+    args = build_parser().parse_args(
+        [
+            "--task", "asr", "--architecture", "wav2vec2",
+            "--dataset-path", "/data/asr.jsonl", "--loss", "ctc",
+            "--optimizer", "adamw", "--learning-rate", "0.001",
+            "--batch-size", "4", "--max-steps", "2", "--device", "cpu",
+            "--precision", "fp32", "--resume-from", "/data/checkpoint.pt",
+            "--output-dir", str(tmp_path),
+        ]
+    )
+    config = {"data": {}, "optimizer": {}, "training": {}, "_compatible_losses": ["ctc"]}
+    apply_cli_overrides(args, config)
+    assert config == {
+        "data": {"dataset_path": "/data/asr.jsonl"},
+        "loss": [{"name": "ctc", "weight": 1.0}],
+        "optimizer": {"name": "adamw", "learning_rate": 0.001},
+        "training": {
+            "batch_size": 4,
+            "max_steps": 2,
+            "device": "cpu",
+            "precision": "fp32",
+            "resume_from": "/data/checkpoint.pt",
+        },
+        "output_dir": str(tmp_path),
+    }
+
+
+def test_offline_flag_disables_hub_downloads(monkeypatch):
+    monkeypatch.delenv("HF_HUB_OFFLINE", raising=False)
+    monkeypatch.delenv("TRANSFORMERS_OFFLINE", raising=False)
+    with patch("training_recipes.cli.train", return_value={"steps": 1}):
+        main(["--task", "asr", "--architecture", "wav2vec2", "--offline"])
+    assert os.environ["HF_HUB_OFFLINE"] == "1"
+    assert os.environ["TRANSFORMERS_OFFLINE"] == "1"

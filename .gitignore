@@ -7,5 +7,3 @@ outputs/
 .cache/
 *.log
 *.egg-info*
-*agenticml-asset-temp/*
-agenticml-assets/

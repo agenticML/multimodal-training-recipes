@@ -57,7 +57,6 @@ def main() -> None:
                 str(args.steps),
                 "--output-dir",
                 output_dir,
-                "--no-track",
             ]
             subprocess.run(command, cwd=PROJECT_ROOT, env=environment, check=True)
             completed += 1

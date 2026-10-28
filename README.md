@@ -16,7 +16,7 @@ The default install includes Hugging Face, media, tokenizer, audio/video, and Lo
 uv sync --extra all --extra dashboard --extra dev
 ```
 
-Dummy/smoke runs instantiate the pinned Hub class from a tiny random config (`from_config`, no weight download) and train one step on dummy tensors shaped for that architecture. `--architecture wav2vec2` therefore tracks `Wav2Vec2ForCTC`, not a surrogate. Six custom/mlx recipes (`audiosr`, `flashsr`, `nuwave2`, `aero`, `universr`, `stylegan2_ada`) are skipped. Full configs still identify the upstream checkpoint and fine-tuning policy and require real preprocessed data plus suitable accelerators.
+Dummy/smoke runs instantiate the pinned Hub class from a tiny random config (`from_config`, no weight download) and train one step on dummy tensors shaped for that architecture. `--architecture wav2vec2` therefore trains `Wav2Vec2ForCTC`. Six custom/mlx recipes (`audiosr`, `flashsr`, `nuwave2`, `aero`, `universr`, `stylegan2_ada`) are skipped. Full configs still identify the upstream checkpoint and fine-tuning policy and require real preprocessed data plus suitable accelerators.
 
 ## Run one recipe
 
@@ -58,59 +58,20 @@ Resume or force cached/offline model resolution with:
 ./tasks/llm/train.sh --architecture gpt2 --profile smoke --offline
 ```
 
-`--offline` only disables Hugging Face hub downloads. It does not change experiment tracking.
-
-## Experiment tracking
-
-Every CLI run is tracked with [AgenticML](https://agenticml.xyz) (`pip install agenticml-py`, `import agenticml`). The default mode is offline, with journals under `outputs/<task>/<architecture>/agenticml/` next to the usual run artifacts.
-
-```bash
-./tasks/asr/train.sh --architecture wav2vec2 --profile smoke
-./tasks/asr/train.sh --architecture wav2vec2 --profile smoke --no-track
-./tasks/asr/train.sh --architecture wav2vec2 --profile smoke \
-  --tracker-mode online --tracker-project multimodal-training-recipes
-```
-
-Online mode needs `AGENTICML_API_KEY` (and optionally `AGENTICML_HOST` / `AGENTICML_MODE`). Use `--no-track` or `--tracker-mode disabled` to skip tracking, `--tracker-name` / `--tracker-group` / `--tracker-offline-dir` / `--agenticml-asset-dir` to override identity and the offline journal root.
-
-`tracking.auto_tracking` defaults to false: the recipe passes `auto_track=False` and records the model, optimizer, loss, and dataloaders with explicit track calls. `--auto-tracking` sets `auto_track=True` and leaves those objects to AgenticML's training-loop detection. Both modes still attach `resolved_config.json`, `model_config.json`, and `batch_shapes.json` through `track_files`.
-
-For an online run against an explicit AgenticML host, set the API key in the
-environment and use the online launcher:
-
-```bash
-export AGENTICML_API_KEY="your-api-key"
-./scripts/run-online.sh \
-  --task asr --architecture wav2vec2 --profile smoke
-```
-
-The launcher defaults `AGENTICML_HOST` to `https://api.agenticml.xyz`, forces
-`--tracker-mode online`, and forwards the remaining options to the standard CLI.
-To use another server, put `--agenticml-host URL` before the recipe arguments.
-Keep the API key out of the script and repository.
-
-There is a dedicated offline entrypoint that always uses `--tracker-mode offline` and requires `--agenticml-asset-dir`:
-
-```bash
-training-recipe-offline --task asr --architecture wav2vec2 --profile smoke \
-  --tracker-mode offline --agenticml-asset-dir /path/to/agenticml-assets
-```
-
 ## Local smoke dashboard
 
-A localhost FastAPI UI lists catalog tasks and architectures, runs one smoke dummy at a time via `training-recipe-offline`, and shows captured AgenticML code assets.
+A localhost FastAPI UI lists catalog tasks and architectures, runs one smoke dummy at a time via the standard training CLI, and shows stdout, summaries, and output locations.
 
 ```bash
 # uses the activated venv (VIRTUAL_ENV), else .venv, else python3
 ./scripts/start_dashboard.sh           # 127.0.0.1:8000
 ./scripts/start_dashboard.sh 8080
-AGENTICML_ASSET_DIR=/tmp/aml-assets ./scripts/start_dashboard.sh 8080
 PYTHON=/path/to/venv/bin/python ./scripts/start_dashboard.sh 8080
 ```
 
 Install FastAPI and Uvicorn in that environment (`uv sync --extra dashboard` or `pip install '.[dashboard]'`).
 
-Profile is locked to `smoke` and tracking to `offline`. Journals land under `AGENTICML_ASSET_DIR` or `agenticml-assets/` at the repo root. Custom/mlx architectures are listed but not runnable.
+Profile is locked to `smoke`. Each run writes training outputs under `outputs/dashboard/<run-id>/<task>/<architecture>/`. Use `python -m training_recipes.dashboard --output-dir /path/to/runs` to choose another location. Custom/mlx architectures are listed but not runnable.
 
 ## Validate and test everything
 
@@ -120,7 +81,7 @@ uv run pytest
 uv run ./scripts/smoke_all.sh --steps 1
 ```
 
-The complete smoke command executes one real forward/backward/optimizer step for the 74 Hub-backed recipes and skips the six custom/mlx architectures. Restrict it to one task with `--task video_classification` or retain artifacts with `--output-dir /path/to/output`. Smoke and `training-recipe-offline` smoke runs do not need `--dataset-path`.
+The complete smoke command executes one real forward/backward/optimizer step for the 74 Hub-backed recipes and skips the six custom/mlx architectures. Restrict it to one task with `--task video_classification` or retain artifacts with `--output-dir /path/to/output`. Smoke runs do not need `--dataset-path`.
 
 To detect whether an upstream repository has moved past the reviewed commit:
 

@@ -35,18 +35,6 @@ wheels = [
 ]
 
 [[package]]
-name = "agenticml-py"
-version = "0.0.3"
-source = { registry = "https://pypi.org/simple" }
-dependencies = [
-    { name = "requests" },
-]
-sdist = { url = "https://files.pythonhosted.org/packages/3c/d5/f6e50eed80d6be897b5c2daf05cdcd5cbaca6a3c1f977690ab869394c74b/agenticml_py-0.0.3.tar.gz", hash = "sha256:af711522e6f22adb309fd89a0c426b268b614e1ec19df42d06f59f0e8b37559a", size = 29602, upload-time = "2026-07-13T17:53:38.304Z" }
-wheels = [
-    { url = "https://files.pythonhosted.org/packages/75/63/60d4a9b4d16f2eefd1a3b57b2a3c48c3d72b0f3320019fa138bbd2934fac/agenticml_py-0.0.3-py3-none-any.whl", hash = "sha256:534ff4428dea11f65ec9470927c61c04b6713579e75446a39db355f3431850be", size = 26184, upload-time = "2026-07-13T17:53:37.013Z" },
-]
-
-[[package]]
 name = "aiohappyeyeballs"
 version = "2.7.1"
 source = { registry = "https://pypi.org/simple" }
@@ -1684,7 +1672,6 @@ version = "0.1.0"
 source = { editable = "." }
 dependencies = [
     { name = "accelerate" },
-    { name = "agenticml-py" },
     { name = "av", version = "17.1.0", source = { registry = "https://pypi.org/simple" }, marker = "python_full_version < '3.11'" },
     { name = "av", version = "18.1.0", source = { registry = "https://pypi.org/simple" }, marker = "python_full_version >= '3.11'" },
     { name = "datasets" },
@@ -1787,7 +1774,6 @@ requires-dist = [
     { name = "accelerate", specifier = ">=1.0" },
     { name = "accelerate", marker = "extra == 'all'", specifier = ">=1.0" },
     { name = "accelerate", marker = "extra == 'hf'", specifier = ">=1.0" },
-    { name = "agenticml-py", specifier = ">=0.0.3" },
     { name = "av", specifier = ">=13" },
     { name = "av", marker = "extra == 'all'", specifier = ">=13" },
     { name = "av", marker = "extra == 'media'", specifier = ">=13" },

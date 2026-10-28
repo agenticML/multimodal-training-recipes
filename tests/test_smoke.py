@@ -25,7 +25,6 @@ def _smoke_config(tmp_path, task: str, architecture: str) -> dict:
     config["training"]["max_steps"] = 1
     config["training"]["save_checkpoint"] = False
     config["output_dir"] = str(tmp_path)
-    config.setdefault("tracking", {})["enabled"] = False
     return config
 
 

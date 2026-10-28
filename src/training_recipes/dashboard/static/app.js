@@ -15,10 +15,8 @@ const statusLine = document.getElementById("status-line");
 const logsEl = document.getElementById("logs");
 const summaryPanel = document.getElementById("summary-panel");
 const summaryEl = document.getElementById("summary");
-const assetsPanel = document.getElementById("assets-panel");
-const fileTree = document.getElementById("file-tree");
-const fileView = document.getElementById("file-view");
-const assetChip = document.getElementById("asset-chip");
+const outputChip = document.getElementById("output-chip");
+const outputPath = document.getElementById("output-path");
 
 function setStatus(text) {
   statusLine.textContent = text;
@@ -148,54 +146,6 @@ function renderSummary(summary) {
   }
 }
 
-function renderTree(groups) {
-  fileTree.replaceChildren();
-  fileView.textContent = "Select a file";
-  const names = Object.keys(groups);
-  if (!names.length) {
-    fileTree.textContent = "No captured code assets";
-    return;
-  }
-  for (const source of names) {
-    const heading = document.createElement("h3");
-    heading.textContent = source;
-    fileTree.appendChild(heading);
-    for (const file of groups[source]) {
-      const button = document.createElement("button");
-      button.type = "button";
-      button.textContent = file.path;
-      button.addEventListener("click", () => {
-        for (const node of fileTree.querySelectorAll("button")) {
-          node.classList.toggle("selected", node === button);
-        }
-        loadFile(file.path);
-      });
-      fileTree.appendChild(button);
-    }
-  }
-}
-
-async function loadFile(path) {
-  fileView.textContent = "Loading";
-  const data = await fetchJson(
-    `/api/runs/${encodeURIComponent(state.runId)}/assets/file?path=${encodeURIComponent(path)}`,
-  );
-  if (data.binary) {
-    fileView.textContent = data.note || "binary file skipped";
-    return;
-  }
-  fileView.textContent = data.content || "";
-  if (data.truncated && data.note) {
-    fileView.textContent += `\n\n[${data.note}]`;
-  }
-}
-
-async function loadAssets() {
-  const data = await fetchJson(`/api/runs/${encodeURIComponent(state.runId)}/assets`);
-  assetsPanel.classList.remove("hidden");
-  renderTree(data.groups || {});
-}
-
 function closeEvents() {
   if (state.eventSource) {
     state.eventSource.close();
@@ -210,7 +160,7 @@ function listen(runId) {
   source.addEventListener("log", (event) => {
     appendLog(JSON.parse(event.data));
   });
-  source.addEventListener("complete", async (event) => {
+  source.addEventListener("complete", (event) => {
     source.close();
     state.eventSource = null;
     state.inFlight = false;
@@ -219,11 +169,6 @@ function listen(runId) {
     if (payload.status === "finished") {
       setStatus("Finished");
       renderSummary(payload.summary);
-      try {
-        await loadAssets();
-      } catch (error) {
-        fileView.textContent = error.message;
-      }
     } else {
       setStatus(payload.error || "Failed");
     }
@@ -244,7 +189,7 @@ async function startRun() {
   updateRunButton();
   logsEl.textContent = "";
   summaryPanel.classList.add("hidden");
-  assetsPanel.classList.add("hidden");
+  outputPath.textContent = "";
   setStatus("Starting");
   try {
     const run = await fetchJson("/api/runs", {
@@ -256,6 +201,7 @@ async function startRun() {
       }),
     });
     state.runId = run.id;
+    outputPath.textContent = `Outputs: ${run.run_dir}/${run.task}/${run.architecture}`;
     setStatus(`Running ${run.id}`);
     listen(run.id);
   } catch (error) {
@@ -267,7 +213,7 @@ async function startRun() {
 
 async function boot() {
   const meta = await fetchJson("/api/meta");
-  assetChip.textContent = `asset dir = ${meta.asset_dir}`;
+  outputChip.textContent = `output dir = ${meta.output_dir}`;
   const tasks = await fetchJson("/api/tasks");
   renderTasks(tasks.tasks || []);
 }

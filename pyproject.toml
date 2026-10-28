@@ -10,7 +10,6 @@ readme = "README.md"
 requires-python = ">=3.10"
 dependencies = [
   "accelerate>=1.0",
-  "agenticml-py>=0.0.3",
   "av>=13",
   "datasets>=3.0",
   "diffusers>=0.35",
@@ -85,7 +84,6 @@ all = [
 
 [project.scripts]
 training-recipe = "training_recipes.cli:main"
-training-recipe-offline = "training_recipes.cli:main_offline"
 
 [tool.setuptools.packages.find]
 where = ["src"]
